@@ -28,3 +28,6 @@ I also added to `CMFCAnimationtestApp::InitInstance()` the code to initialize CO
 ## Reading
 
 [Windows Animation Overview](https://learn.microsoft.com/en-us/windows/win32/uianimation/scenic-animation-api-overview)
+
+[DirectComposition](https://learn.microsoft.com/en-us/windows/win32/directcomp/directcomposition-portal)
+
