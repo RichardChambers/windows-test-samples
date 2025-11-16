@@ -1,3 +1,5 @@
+## Overview
+
 This is a simple animation test program to see how to use the DirectCompositionWindowsAnimationManager example
 from the Microsoft repository of https://github.com/microsoft/Windows-classic-samples within an MFC application.
 
@@ -22,3 +24,7 @@ I also added to `CMFCAnimationtestApp::InitInstance()` the code to initialize CO
     HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
     assert(SUCCEEDED(hr));
 ```
+
+## Reading
+
+[Windows Animation Overview](https://learn.microsoft.com/en-us/windows/win32/uianimation/scenic-animation-api-overview)
