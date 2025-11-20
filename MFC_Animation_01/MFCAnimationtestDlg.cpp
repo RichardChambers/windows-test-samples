@@ -8,6 +8,7 @@
 #include "MFCAnimationtestDlg.h"
 #include "afxdialogex.h"
 
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -48,22 +49,33 @@ END_MESSAGE_MAP()
 
 // CMFCAnimationtestDlg dialog
 
-
-
 CMFCAnimationtestDlg::CMFCAnimationtestDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_MFCANIMATIONTEST_DIALOG, pParent)
+	: pScrollPane(nullptr), CDialogEx(IDD_MFCANIMATIONTEST_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}
+
+
+CMFCAnimationtestDlg::~CMFCAnimationtestDlg()
+{
+	if (pScrollPane) delete pScrollPane;
+	pScrollPane = nullptr;
 }
 
 void CMFCAnimationtestDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+
+	if (!pDX->m_bSaveAndValidate) {
+		fadeInThread = std::thread(&CMFCAnimationtestDlg::FadeIn, this, GetDlgItem(1000));
+	}
 }
 
 BEGIN_MESSAGE_MAP(CMFCAnimationtestDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
+	ON_WM_WINDOWPOSCHANGING()
 	ON_WM_PAINT()
+	ON_WM_SIZE()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONDOWN()
@@ -71,6 +83,76 @@ BEGIN_MESSAGE_MAP(CMFCAnimationtestDlg, CDialogEx)
 	ON_WM_RBUTTONUP()
 END_MESSAGE_MAP()
 
+
+void CMFCAnimationtestDlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+	char buffer[256] = { 0 };
+	_snprintf_s(buffer, sizeof(buffer), "CMFCAnimationtestDlg::OnSize  nType %d  cx %d cy %d\n", nType, cx, cy);
+	OutputDebugStringA(buffer);
+
+	CRect rc;
+	GetClientRect(&rc);
+	_snprintf_s(buffer, sizeof(buffer), "CMFCAnimationtestDlg::GetClientRect  left %d  top %d   right %d  bottom %d\n", rc.left, rc.top, rc.right, rc.bottom);
+	OutputDebugStringA(buffer);
+
+
+	if (pPlaceHolder) {
+		pPlaceHolder->GetClientRect(&rc);
+		_snprintf_s(buffer, sizeof(buffer), "pPlaceHolder::GetClientRect  left %d  top %d   right %d  bottom %d\n", rc.left, rc.top, rc.right, rc.bottom);
+		OutputDebugStringA(buffer);
+
+		pPlaceHolder->SendMessage(WM_SIZE, nType, MAKELPARAM(cy, rcPlaceHolder.right));
+
+		pPlaceHolder->SetWindowPos(nullptr, 0, 0, rcPlaceHolder.right, cy, SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOZORDER);
+	}
+
+	if (pScrollPane) {
+		pScrollPane->GetClientRect(&rc);
+		_snprintf_s(buffer, sizeof(buffer), "pScrollPane::GetClientRect  left %d  top %d   right %d  bottom %d\n", rc.left, rc.top, rc.right, rc.bottom);
+		OutputDebugStringA(buffer);
+		pScrollPane->SetWindowPos(nullptr, 0, 0, rcScrollPane.right, cy, SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOZORDER);
+		pScrollPane->SendMessage(WM_SIZE, nType, MAKELPARAM(cy, rcScrollPane.right));
+	}
+}
+
+
+void CMFCAnimationtestDlg::OnWindowPosChanging(WINDOWPOS * lpwndpos)
+{
+#if 0
+	if (!m_bVisible)
+	{
+		lpwndpos->flags &= ~SWP_SHOWWINDOW; // Prevent the dialog from showing
+	}
+#endif
+	WINDOWPOS  savePos = *lpwndpos;
+
+	CDialog::OnWindowPosChanging(lpwndpos); // Call the base class handler
+
+	char buffer[256] = { 0 };
+	_snprintf_s(buffer, sizeof(buffer), "lpwndpos x %d, y %d  width %d height %d   flags0x%x\n", savePos.x, savePos.y, savePos.cx, savePos.cy, savePos.flags);
+	OutputDebugStringA(buffer);
+
+//	pScrollPane->SetWindowPos(NULL, 0, 0, savePos.cx, savePos.cy, savePos.flags);
+
+}
+
+void CMFCAnimationtestDlg::FadeIn(CWnd *ctl)
+{
+	::Sleep(500);
+	m_bVisible = true;
+//	ShowWindow(SW_SHOW);
+	// Animate the window to fade in
+//	ctl->AnimateWindow(2500, AW_BLEND); // 500ms fade duration
+	ctl->AnimateWindow(2500, AW_BLEND); // 500ms fade duration
+}
+
+void CMFCAnimationtestDlg::FadeOut (CWnd* ctl)
+{
+	// Animate the window to fade in
+	ctl->AnimateWindow(2500, AW_HIDE); // 500ms fade duration
+}
 
 void CMFCAnimationtestDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
@@ -92,8 +174,13 @@ void CMFCAnimationtestDlg::OnRButtonUp(UINT nFlags, CPoint point)
 	HRESULT result = animate.Move(stopBackward);
 }
 
-
 // CMFCAnimationtestDlg message handlers
+
+INT_PTR CALLBACK dlgFunc1002(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+
+	return FALSE;
+}
 
 BOOL CMFCAnimationtestDlg::OnInitDialog()
 {
@@ -129,6 +216,15 @@ BOOL CMFCAnimationtestDlg::OnInitDialog()
 	animate.SetHwndSizeTileSpacing(m_hWnd, 500, 170.0f);
 
 	animate.BeforeEnteringMessageLoop();
+
+	pPlaceHolder = GetDlgItem(IDD_MFCANIMATIONTEST_SCROLLPANE);
+	if (pPlaceHolder) {
+		pPlaceHolder->GetClientRect(&rcPlaceHolder);
+
+		pScrollPane = new CScrollPane(this);
+		pScrollPane->Create(IDD_MFCANIMATIONTEST_SCROLLPANE, this);
+		pScrollPane->GetClientRect(&rcScrollPane);
+	}
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

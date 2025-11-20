@@ -186,6 +186,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CAnimateWAM.h" />
+    <ClInclude Include="CScrollPane.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MFCAnimationtest.h" />
     <ClInclude Include="MFCAnimationtestDlg.h" />
@@ -195,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CAnimateWAM.cpp" />
+    <ClCompile Include="CScrollPane.cpp" />
     <ClCompile Include="MFCAnimationtest.cpp" />
     <ClCompile Include="MFCAnimationtestDlg.cpp" />
     <ClCompile Include="pch.cpp">

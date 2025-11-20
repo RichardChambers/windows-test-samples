@@ -368,6 +368,7 @@ HRESULT CAnimateWAM::CreateDCompositionVisualTree()
 HRESULT CAnimateWAM::CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation** slideAnimation)
 {
     HRESULT hr = (slideAnimation == nullptr) ? E_POINTER : S_OK;
+    assert(SUCCEEDED(hr));
 
     float rightMargin = 27 * _spacingTile * -1;  //where the tiles end. Note forward direction is represented by a negative value.
     float leftMargin = 0; // where the tiles begin
@@ -376,6 +377,7 @@ HRESULT CAnimateWAM::CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation*
     {
         *slideAnimation = nullptr;
         hr = ((_device == nullptr) || (_animationVariable == nullptr)) ? E_UNEXPECTED : S_OK;
+        assert(SUCCEEDED(hr));
     }
 
     //WAM propagates curves to DirectComposition using the IDCompositionAnimation object
@@ -384,6 +386,7 @@ HRESULT CAnimateWAM::CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation*
     if (SUCCEEDED(hr))
     {
         hr = _device->CreateAnimation(&animation);
+        assert(SUCCEEDED(hr));
     }
 
     //Create a storyboard for the slide animation
@@ -392,6 +395,7 @@ HRESULT CAnimateWAM::CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation*
     if (SUCCEEDED(hr))
     {
         hr = _manager->CreateStoryboard(&storyboard);
+        assert(SUCCEEDED(hr));
     }
 
     // Synchronizing WAM and DirectComposition time such that when WAM Update is called, 
@@ -401,6 +405,7 @@ HRESULT CAnimateWAM::CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation*
     if (SUCCEEDED(hr))
     {
         hr = _device->GetFrameStatistics(&frameStatistics);
+        assert(SUCCEEDED(hr));
     }
 
     UI_ANIMATION_SECONDS nextEstimatedFrameTime = 0.0;
@@ -414,6 +419,7 @@ HRESULT CAnimateWAM::CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation*
     if (SUCCEEDED(hr))
     {
         hr = _manager->Update(nextEstimatedFrameTime);
+        assert(SUCCEEDED(hr));
     }
 
     CComPtr<IUIAnimationTransition2> transition;
@@ -423,22 +429,27 @@ HRESULT CAnimateWAM::CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation*
     if (SUCCEEDED(hr))
     {
         hr = _animationVariable->GetValue(&curValue);
+        assert(SUCCEEDED(hr));
 
         switch (dir)
         {
         case stopForward:
         case stopBackward:
             // Stopping the animation smoothly when key is let go
-            if (curValue != leftMargin && curValue != rightMargin)
+            if (curValue != leftMargin && curValue != rightMargin) {
                 hr = _transitionLibrary->CreateSmoothStopTransition(0.5, curValue + dir * 50, &transition);
+                assert(SUCCEEDED(hr));
+            }
             break;
         case forward:
             // slide the tiles forward using a linear curve upon left button press
             hr = _transitionLibrary->CreateLinearTransition(-1 * (rightMargin - curValue) / velocity, rightMargin, &transition);
+            assert(SUCCEEDED(hr));
             break;
         case backward:
             // slide the tiles backward using a linear cruve upon right button press
             hr = _transitionLibrary->CreateLinearTransition(-1 * curValue / velocity, leftMargin, &transition);
+            assert(SUCCEEDED(hr));
             break;
         }
     }
@@ -446,19 +457,23 @@ HRESULT CAnimateWAM::CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation*
     //Add above transition to storyboard
     if (SUCCEEDED(hr))
     {
+        // allow silient failure of this function to indicate end of transition.
         hr = storyboard->AddTransition(_animationVariable, transition);
+//        assert(SUCCEEDED(hr));        // allow silient failure of this function
     }
 
     //schedule the storyboard for play at the next estimate vblank
     if (SUCCEEDED(hr))
     {
         hr = storyboard->Schedule(nextEstimatedFrameTime);
+        assert(SUCCEEDED(hr));
     }
 
     //Giving WAM varialbe the IDCompositionAnimation object to recieve the animation curves
     if (SUCCEEDED(hr))
     {
         hr = _animationVariable->GetCurve(animation);
+        assert(SUCCEEDED(hr));
     }
 
     if (SUCCEEDED(hr))
@@ -472,10 +487,12 @@ HRESULT CAnimateWAM::CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation*
 HRESULT CAnimateWAM::AttachDCompositionVisualTreeToRenderTarget()
 {
     HRESULT hr = ((_target == nullptr) || (_visual == nullptr)) ? E_UNEXPECTED : S_OK;
+    assert(SUCCEEDED(hr));
 
     if (SUCCEEDED(hr))
     {
         hr = _target->SetRoot(_visual);
+        assert(SUCCEEDED(hr));
     }
 
     return hr;
@@ -484,10 +501,12 @@ HRESULT CAnimateWAM::AttachDCompositionVisualTreeToRenderTarget()
 HRESULT CAnimateWAM::DetachDCompositionVisualTreeToRenderTarget()
 {
     HRESULT hr = (_target == nullptr) ? E_UNEXPECTED : S_OK;
+    assert(SUCCEEDED(hr));
 
     if (SUCCEEDED(hr))
     {
         hr = _target->SetRoot(nullptr);
+        assert(SUCCEEDED(hr));
     }
 
     return hr;
@@ -518,6 +537,7 @@ void CAnimateWAM::DestroyDCompositionDevice()
 HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWidth, int* bitmapHeight, IDCompositionSurface** surface)
 {
     HRESULT hr = ((bitmapWidth == nullptr) || (bitmapHeight == nullptr) || (surface == nullptr)) ? E_POINTER : S_OK;
+    assert(SUCCEEDED(hr));
 
     if (SUCCEEDED(hr))
     {
@@ -526,6 +546,7 @@ HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWid
         *surface = NULL;
 
         hr = (filename == nullptr) ? E_INVALIDARG : S_OK;
+        assert(SUCCEEDED(hr));
     }
 
     CComPtr<ID2D1Bitmap> d2d1Bitmap;
@@ -534,6 +555,7 @@ HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWid
     if (SUCCEEDED(hr))
     {
         hr = CreateD2D1BitmapFromFile(filename, &d2d1Bitmap);
+        assert(SUCCEEDED(hr));
     }
 
     CComPtr<IDCompositionSurface> surfaceTile;
@@ -548,6 +570,7 @@ HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWid
             DXGI_FORMAT_R8G8B8A8_UNORM,
             DXGI_ALPHA_MODE_IGNORE,
             &surfaceTile);
+        assert(SUCCEEDED(hr));
     }
 
     CComPtr<IDXGISurface> dxgiSurface;
@@ -558,6 +581,7 @@ HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWid
         RECT rect = { 0, 0, static_cast<LONG>(bitmapSize.width), static_cast<LONG>(bitmapSize.height) };
 
         hr = surfaceTile->BeginDraw(&rect, __uuidof(IDXGISurface), reinterpret_cast<void**>(&dxgiSurface), &offset);
+        assert(SUCCEEDED(hr));
     }
 
     CComPtr<ID2D1Bitmap1> d2d1Target;
@@ -577,6 +601,7 @@ HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWid
             dpi);
 
         hr = _d2d1DeviceContext->CreateBitmapFromDxgiSurface(dxgiSurface, &bitmapProperties, &d2d1Target);
+        assert(SUCCEEDED(hr));
 
         if (SUCCEEDED(hr))
         {
@@ -593,6 +618,7 @@ HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWid
                     offset.y + bitmapSize.height));
 
             hr = _d2d1DeviceContext->EndDraw();
+            assert(SUCCEEDED(hr));
         }
 
         surfaceTile->EndDraw();
@@ -611,12 +637,14 @@ HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWid
 HRESULT CAnimateWAM::CreateD2D1BitmapFromFile(LPCWSTR filename, ID2D1Bitmap** bitmap)
 {
     HRESULT hr = (bitmap == nullptr) ? E_POINTER : S_OK;
+    assert(SUCCEEDED(hr));
 
     if (SUCCEEDED(hr))
     {
         *bitmap = nullptr;
 
         hr = (_wicFactory == nullptr) ? E_UNEXPECTED : S_OK;
+        assert(SUCCEEDED(hr));
     }
 
     CComPtr<IWICBitmapDecoder> wicBitmapDecoder;
@@ -629,6 +657,7 @@ HRESULT CAnimateWAM::CreateD2D1BitmapFromFile(LPCWSTR filename, ID2D1Bitmap** bi
             GENERIC_READ,
             WICDecodeMetadataCacheOnLoad,
             &wicBitmapDecoder);
+        assert(SUCCEEDED(hr));
     }
 
     CComPtr<IWICBitmapFrameDecode> wicBitmapFrame;
@@ -636,6 +665,7 @@ HRESULT CAnimateWAM::CreateD2D1BitmapFromFile(LPCWSTR filename, ID2D1Bitmap** bi
     if (SUCCEEDED(hr))
     {
         hr = wicBitmapDecoder->GetFrame(0, &wicBitmapFrame);
+        assert(SUCCEEDED(hr));
     }
 
     CComPtr<IWICFormatConverter> wicFormatConverter;
@@ -643,6 +673,7 @@ HRESULT CAnimateWAM::CreateD2D1BitmapFromFile(LPCWSTR filename, ID2D1Bitmap** bi
     if (SUCCEEDED(hr))
     {
         hr = _wicFactory->CreateFormatConverter(&wicFormatConverter);
+        assert(SUCCEEDED(hr));
     }
 
     if (SUCCEEDED(hr))
@@ -654,6 +685,7 @@ HRESULT CAnimateWAM::CreateD2D1BitmapFromFile(LPCWSTR filename, ID2D1Bitmap** bi
             nullptr,
             0.0f,
             WICBitmapPaletteTypeMedianCut);
+        assert(SUCCEEDED(hr));
     }
 
     CComPtr<IWICBitmap> wicBitmap;
@@ -661,11 +693,13 @@ HRESULT CAnimateWAM::CreateD2D1BitmapFromFile(LPCWSTR filename, ID2D1Bitmap** bi
     if (SUCCEEDED(hr))
     {
         hr = _wicFactory->CreateBitmapFromSource(wicFormatConverter, WICBitmapCacheOnLoad, &wicBitmap);
+        assert(SUCCEEDED(hr));
     }
 
     if (SUCCEEDED(hr))
     {
         hr = _d2d1DeviceContext->CreateBitmapFromWicBitmap(wicBitmap, bitmap);
+        assert(SUCCEEDED(hr));
     }
 
     return hr;
@@ -802,8 +836,9 @@ HRESULT CAnimateWAM::Move(DIRECTION dir)
     if (SUCCEEDED(hr))
     {
         // Create the animation curves using WAM
+        // allow silient failure of this function to indicate end of transition.
         hr = CreateSlideAnimation(dir, &slideAnimation);
-        assert(SUCCEEDED(hr));
+//        assert(SUCCEEDED(hr));    // allow silient failure of this function
     }
 
     if (SUCCEEDED(hr))
