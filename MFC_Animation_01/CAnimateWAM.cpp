@@ -591,7 +591,7 @@ HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWid
         FLOAT dpiY = 0.0f;
 
 //        _d2d1Factory->GetDesktopDpi(&dpiX, &dpiY);
-        float dpi = GetDpiForWindow(_hwnd);
+        float dpi = static_cast<float>(GetDpiForWindow(_hwnd));
 
         D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(
             D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
@@ -714,13 +714,20 @@ HRESULT CAnimateWAM::BeforeEnteringMessageLoop(const WCHAR* filename)
 {
     HRESULT hr = 0;
 
-//    hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-//    assert(SUCCEEDED(hr));
+#if 0
+    // The following source to initialize COM which is needed for the animation library
+    // has been moved to CMFCAnimationtestApp::InitInstance() which is performed at startup
+    // of the application making COM available to the entire application and not just this
+    // functionality.
 
-//    if (SUCCEEDED(hr))
-//    {
-//        hr = CreateApplicationWindow();
-//    }
+    hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    assert(SUCCEEDED(hr));
+
+    if (SUCCEEDED(hr))
+    {
+        hr = CreateApplicationWindow();
+    }
+#endif
 
     if (SUCCEEDED(hr))
     {

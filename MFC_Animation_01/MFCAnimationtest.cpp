@@ -55,6 +55,8 @@ BOOL CMFCAnimationtestApp::InitInstance()
 
 	AfxEnableControlContainer();
 
+	// following COM initialization was in CAnimateWAM::BeforeEnteringMessageLoop()
+	// but was moved here in order to provide COM to the entire application.
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
     assert(SUCCEEDED(hr));
 
