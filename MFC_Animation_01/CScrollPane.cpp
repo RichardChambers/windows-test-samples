@@ -79,11 +79,22 @@ BOOL CScrollPane::OnInitDialog()
 	si.nPos = yCurrentScroll;
 	SetScrollInfo(SB_VERT, &si, TRUE);
 
+	int xMaxScroll = rcPaneSize.right;
+	int xCurrentScroll = 0;
+	si.cbSize = sizeof(si);
+	si.fMask = SIF_RANGE | SIF_PAGE | SIF_POS;
+	si.nMin = 0;
+	si.nMax = rcPaneSize.right;
+	si.nPage = rcPaneSize.right / rcPaneViewPort.right;
+	si.nPos = xCurrentScroll;
+	SetScrollInfo(SB_HORZ, &si, TRUE);
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
 BEGIN_MESSAGE_MAP(CScrollPane, CDialogEx)
 	ON_WM_VSCROLL()
+	ON_WM_HSCROLL()
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
@@ -162,7 +173,7 @@ void CScrollPane::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	if (nNewScrollY != m_scrollY)
 	{
-		ScrollControls(m_scrollY - nNewScrollY); // Move amount is old position - new position
+		ScrollYControls(m_scrollY - nNewScrollY); // Move amount is old position - new position
 		m_scrollY = nNewScrollY;
 		si.fMask = SIF_POS;
 		si.nPos = m_scrollY;
@@ -171,7 +182,55 @@ void CScrollPane::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 }
 
 
-void CScrollPane::ScrollControls(int deltaY)
+void CScrollPane::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	int nDeltaX = 0;
+	int nLineHeight = 20; // Scroll increment
+
+	switch (nSBCode)
+	{
+	case SB_LINEUP: nDeltaX = -nLineHeight; break;
+	case SB_LINEDOWN: nDeltaX = nLineHeight; break;
+	case SB_PAGEUP:
+	{
+		CRect rc;
+		GetClientRect(&rc);
+		nDeltaX = -rc.Width();
+		break;
+	}
+	case SB_PAGEDOWN:
+	{
+		CRect rc;
+		GetClientRect(&rc);
+		nDeltaX = rc.Width();
+		break;
+	}
+	case SB_THUMBTRACK: nDeltaX = (int)nPos - m_scrollX; break;
+	default: CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar); return;
+	}
+
+	int nNewScrollX = m_scrollX + nDeltaX;
+
+	SCROLLINFO si = { sizeof(si) };
+	si.fMask = SIF_RANGE | SIF_PAGE;
+	GetScrollInfo(SB_HORZ, &si);
+	int nMaxScrollX = si.nMax - (int)si.nPage + 1;
+
+	if (nNewScrollX < si.nMin) nNewScrollX = si.nMin;
+	if (nNewScrollX > nMaxScrollX) nNewScrollX = nMaxScrollX;
+
+	if (nNewScrollX != m_scrollX)
+	{
+		ScrollXControls(m_scrollX - nNewScrollX); // Move amount is old position - new position
+		m_scrollX = nNewScrollX;
+		si.fMask = SIF_POS;
+		si.nPos = m_scrollX;
+		SetScrollInfo(SB_HORZ, &si, TRUE);
+	}
+}
+
+
+void CScrollPane::ScrollYControls(int deltaY)
 {
 	// Iterate through all children and move them relative to the new scroll position
 	CWnd* pChild = GetWindow(GW_CHILD);
@@ -182,6 +241,24 @@ void CScrollPane::ScrollControls(int deltaY)
 		ScreenToClient(&rc); // Map screen coords to our dialog's client coords
 
 		pChild->SetWindowPos(NULL, rc.left, rc.top + deltaY, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+
+		pChild = pChild->GetWindow(GW_HWNDNEXT);
+	}
+	InvalidateRect(NULL, TRUE);
+}
+
+
+void CScrollPane::ScrollXControls(int deltaX)
+{
+	// Iterate through all children and move them relative to the new scroll position
+	CWnd* pChild = GetWindow(GW_CHILD);
+	while (pChild)
+	{
+		CRect rc;
+		pChild->GetWindowRect(&rc);
+		ScreenToClient(&rc); // Map screen coords to our dialog's client coords
+
+		pChild->SetWindowPos(NULL, rc.left + deltaX, rc.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 
 		pChild = pChild->GetWindow(GW_HWNDNEXT);
 	}

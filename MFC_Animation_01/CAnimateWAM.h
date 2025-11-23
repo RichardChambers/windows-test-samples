@@ -27,7 +27,7 @@ private:
     HRESULT CreateAnimationVariables();
     HRESULT CreateDCompositionDevice();
     HRESULT CreateDCompositionRenderTarget();
-    HRESULT CreateDCompositionVisualTree();
+    HRESULT CreateDCompositionVisualTreeFromFile(const WCHAR* filename);
     HRESULT AttachDCompositionVisualTreeToRenderTarget();
     HRESULT DetachDCompositionVisualTreeToRenderTarget();
     HRESULT CreateSlideAnimation(DIRECTION dir, IDCompositionAnimation** slideAnimation);
@@ -76,7 +76,7 @@ public:
 
     void SetHwndSizeTileSpacing(HWND hWnd, int sizeWindow = 0, float spacingTile = 0.0f);
 
-    HRESULT BeforeEnteringMessageLoop();
+    HRESULT BeforeEnteringMessageLoop(const WCHAR* filename);
     void AfterLeavingMessageLoop();
     HRESULT Move(DIRECTION dir);
 

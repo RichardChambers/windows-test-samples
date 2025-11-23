@@ -99,21 +99,25 @@ void CMFCAnimationtestDlg::OnSize(UINT nType, int cx, int cy)
 
 
 	if (pPlaceHolder) {
+		int cyTemp = cy;
+		if (cyTemp > rcPlaceHolder.bottom) cyTemp = rcPlaceHolder.bottom;
 		pPlaceHolder->GetClientRect(&rc);
-		_snprintf_s(buffer, sizeof(buffer), "pPlaceHolder::GetClientRect  left %d  top %d   right %d  bottom %d\n", rc.left, rc.top, rc.right, rc.bottom);
+		_snprintf_s(buffer, sizeof(buffer), "pPlaceHolder::GetClientRect  left %d  top %d   right %d  bottom %d  cyTemp %d\n", rc.left, rc.top, rc.right, rc.bottom, cyTemp);
 		OutputDebugStringA(buffer);
 
-		pPlaceHolder->SendMessage(WM_SIZE, nType, MAKELPARAM(cy, rcPlaceHolder.right));
+		pPlaceHolder->SendMessage(WM_SIZE, nType, MAKELPARAM(cyTemp, rcPlaceHolder.right));
 
-		pPlaceHolder->SetWindowPos(nullptr, 0, 0, rcPlaceHolder.right, cy, SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOZORDER);
+		pPlaceHolder->SetWindowPos(nullptr, 0, 0, rcPlaceHolder.right, cyTemp, SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOZORDER);
 	}
 
 	if (pScrollPane) {
+		int cyTemp = cy;
+		if (cyTemp > rcScrollPane.bottom) cyTemp = rcScrollPane.bottom;
 		pScrollPane->GetClientRect(&rc);
-		_snprintf_s(buffer, sizeof(buffer), "pScrollPane::GetClientRect  left %d  top %d   right %d  bottom %d\n", rc.left, rc.top, rc.right, rc.bottom);
+		_snprintf_s(buffer, sizeof(buffer), "pScrollPane::GetClientRect  left %d  top %d   right %d  bottom %d  cyTemp %d\n", rc.left, rc.top, rc.right, rc.bottom, cyTemp);
 		OutputDebugStringA(buffer);
-		pScrollPane->SetWindowPos(nullptr, 0, 0, rcScrollPane.right, cy, SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOZORDER);
-		pScrollPane->SendMessage(WM_SIZE, nType, MAKELPARAM(cy, rcScrollPane.right));
+		pScrollPane->SetWindowPos(nullptr, 0, 0, rcScrollPane.right, cyTemp, SWP_NOMOVE | SWP_NOREPOSITION | SWP_NOZORDER);
+		pScrollPane->SendMessage(WM_SIZE, nType, MAKELPARAM(cyTemp, rcScrollPane.right));
 	}
 }
 
@@ -184,6 +188,8 @@ INT_PTR CALLBACK dlgFunc1002(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 BOOL CMFCAnimationtestDlg::OnInitDialog()
 {
+	static const WCHAR* filename = L"220Strawberry.png";
+
 	CDialogEx::OnInitDialog();
 
 	// Add "About..." menu item to system menu.
@@ -215,7 +221,7 @@ BOOL CMFCAnimationtestDlg::OnInitDialog()
 
 	animate.SetHwndSizeTileSpacing(m_hWnd, 500, 170.0f);
 
-	animate.BeforeEnteringMessageLoop();
+	animate.BeforeEnteringMessageLoop(filename);
 
 	pPlaceHolder = GetDlgItem(IDD_MFCANIMATIONTEST_SCROLLPANE);
 	if (pPlaceHolder) {

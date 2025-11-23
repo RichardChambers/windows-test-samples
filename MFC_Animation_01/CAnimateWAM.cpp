@@ -239,9 +239,8 @@ HRESULT CAnimateWAM::CreateDCompositionRenderTarget()
 // Creates a DirectComposition visual tree and places each visual 
 // inside the application window
 //---------------------------------------------------------------------
-HRESULT CAnimateWAM::CreateDCompositionVisualTree()
+HRESULT CAnimateWAM::CreateDCompositionVisualTreeFromFile(const WCHAR* filename)
 {
-    static const WCHAR* filename = L"220Strawberry.png";
     static const float tileSize = 0.3f * _sizeWidow;
     static const int visualChildCount = sizeof(_visualChild) / sizeof(_visualChild[0]);
     static const float d = 2.0f * _sizeWidow;
@@ -634,7 +633,7 @@ HRESULT CAnimateWAM::CreateSurfaceFromFile(const WCHAR* filename, int* bitmapWid
     return hr;
 }
 
-HRESULT CAnimateWAM::CreateD2D1BitmapFromFile(LPCWSTR filename, ID2D1Bitmap** bitmap)
+HRESULT CAnimateWAM::CreateD2D1BitmapFromFile(const WCHAR* filename, ID2D1Bitmap** bitmap)
 {
     HRESULT hr = (bitmap == nullptr) ? E_POINTER : S_OK;
     assert(SUCCEEDED(hr));
@@ -711,7 +710,7 @@ HRESULT CAnimateWAM::CreateD2D1BitmapFromFile(LPCWSTR filename, ID2D1Bitmap** bi
 // Creates and initializes all the objects we need for the application
 //--------------------------------------------------------
 
-HRESULT CAnimateWAM::BeforeEnteringMessageLoop()
+HRESULT CAnimateWAM::BeforeEnteringMessageLoop(const WCHAR* filename)
 {
     HRESULT hr = 0;
 
@@ -779,7 +778,7 @@ HRESULT CAnimateWAM::BeforeEnteringMessageLoop()
 
     if (SUCCEEDED(hr))
     {
-        hr = CreateDCompositionVisualTree();
+        hr = CreateDCompositionVisualTreeFromFile(filename);
         assert(SUCCEEDED(hr));
     }
 
