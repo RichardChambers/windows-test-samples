@@ -1,33 +1,18 @@
 ## Overview
 
-This is a simple animation test program to see how to use the DirectCompositionWindowsAnimationManager example
-from the Microsoft repository of https://github.com/microsoft/Windows-classic-samples within an MFC application.
+Working on the Animation test program, I wanted to have a vertical menu that would slide out. I took the source code
+from the animation test program, trimmed out the animation part, and then worked on just the sliding menu.
 
-This is a MFC dialog based test application in order to simplify the code a bit.
+Turns out that doing this was not easy in MFC however in the end I was able to get the window and mouse mechanics to work.
 
-The basic procedure was as follows:
- - use the MFC Desktop template in Visual Studio 2019 to generate a dialog based application
- - copy over the source for creating and manipulating the animation of a simple .png file
+Along the way I took a look at a few other things such as accessing the client area of a CStatic dialog item and writing to it.
 
-The animation source was placed in a separate class file, `CAnimateWAM`, to create a class that could
-then be dropped into the MFC template generated source code.
+The main files modified have been CScrollPane and CSlidingMenuWin.
 
-The `OnInitDialog()` function that is called as part of perform the `DoModal()` member function of the dialog
-has the `CAnimateWAM` member functions to initialize the Windows Animation Manager environment. The dialog window handle
-is needed for the WAM initialization and that is first available in the OnInitDialog() member function.
+CScrollPane was about adding a scrolling window region in the dialog originally however I added the CStaticNotes and CWndNotes
+classes for learning about how to make sub windows and other regions of an app's window to do various things.
 
-Button event handlers were added to the `BEGIN_MESSAGE_MAP(CMFCAnimationtestDlg, CDialogEx)` with a call to 
-`animate.Move(dir);` with the appropriate `DIRECTION` value.
+I have found that dialog templates are actually rather versatile and can be used to create modal and non-modal dialogs as well
+as being used to layout a CWnd surface. For instance I have used dialog templates with tab controls.
 
-I also added to `CMFCAnimationtestApp::InitInstance()` the code to initialize COM needed for the WAM COM objects:
-```
-    HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-    assert(SUCCEEDED(hr));
-```
-
-## Reading
-
-[Windows Animation Overview](https://learn.microsoft.com/en-us/windows/win32/uianimation/scenic-animation-api-overview)
-
-[DirectComposition](https://learn.microsoft.com/en-us/windows/win32/directcomp/directcomposition-portal)
-
+This uses an MFC DIALOG application model.
