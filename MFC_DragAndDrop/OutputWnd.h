@@ -1,0 +1,60 @@
+
+#pragma once
+
+#include <string>
+
+/////////////////////////////////////////////////////////////////////////////
+// COutputList window
+
+class COutputList : public CListBox
+{
+// Construction
+public:
+	COutputList() noexcept;
+
+// Implementation
+public:
+	virtual ~COutputList();
+
+protected:
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnEditCopy();
+	afx_msg void OnEditClear();
+	afx_msg void OnViewOutput();
+
+	DECLARE_MESSAGE_MAP()
+};
+
+class COutputWnd : public CDockablePane
+{
+// Construction
+public:
+	COutputWnd() noexcept;
+
+	void UpdateFonts();
+
+// Attributes
+protected:
+	CMFCTabCtrl	m_wndTabs;
+
+	COutputList m_wndOutputBuild;
+
+protected:
+	void FillBuildWindow();
+
+	void AdjustHorzScroll(CListBox& wndListBox);
+
+// Implementation
+public:
+	enum class WindowType {None=0, Build, Debug, Find};
+	virtual ~COutputWnd();
+
+	void WriteToOutputWindow(const WindowType wid, const std::wstring str);
+
+protected:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+	DECLARE_MESSAGE_MAP()
+};
+
