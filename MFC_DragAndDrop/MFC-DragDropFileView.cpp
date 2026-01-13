@@ -47,6 +47,8 @@ CMFCDragDropFileView::CMFCDragDropFileView() noexcept
 {
 	// TODO: add construction code here
 
+	m_DraggingState = DraggingState::None;
+
 	myIcount = ++iCount;
 
 	str[0] = L"Text Type";
@@ -82,11 +84,11 @@ void CMFCDragDropFileView::OnSize(UINT nType, int cx, int cy)
 {
 	CView::OnSize(nType, cx, cy);
 
-	if (m_wndMyDialogPane.m_hWnd != NULL)
+	if (m_wndMyDialogPaneAC20.m_hWnd != NULL)
 	{
 		// Resize the dialog to fit within a desired area of the view
 		// e.g., Fill the entire view
-//		m_wndMyDialogPane.MoveWindow(0, 0, cx, cy);
+//		m_wndMyDialogPaneAC20.MoveWindow(0, 0, cx, cy);
 	}
 }
 
@@ -101,30 +103,30 @@ void CMFCDragDropFileView::OnInitialUpdate()
 	}
 
 	// Check if the dialog window has already been created (m_hWnd is non-NULL)
-	if (m_wndMyDialogPane.m_hWnd == NULL)
+	if (m_wndMyDialogPaneAC20.m_hWnd == NULL)
 	{
 		// Create the modeless dialog as a child of the view
 		// IDD_MY_DIALOG_PANE is the dialog resource ID
 		// "this" points to the CView parent
-		if (!m_wndMyDialogPane.Create(IDD_DIALOG1, this))
+		if (!m_wndMyDialogPaneAC20.Create(IDD_DIALOG_AC20, this))
 		{
 			// Handle creation failure
 			TRACE0("Warning: Dialog creation failed.\n");
 			return;
 		}
 
-		m_wndMyDialogPane.DropType(DRAGDROP_DATA_AC20);
+		m_wndMyDialogPaneAC20.DropType(DRAGDROP_DATA_AC20);
 
 		// Optional: Position the dialog within the view's client area
 		// Get the view's client rectangle
 		CRect rcClient;
 		GetClientRect(&rcClient);
 		CRect rcDialog;
-		m_wndMyDialogPane.GetClientRect(&rcDialog);
+		m_wndMyDialogPaneAC20.GetClientRect(&rcDialog);
 
 		// Set the dialog's position and size
 		// Example: place it in the top-left corner with specific dimensions
-		m_wndMyDialogPane.SetWindowPos(NULL, 150, 10, 400, 300, SWP_SHOWWINDOW | SWP_NOZORDER);
+		m_wndMyDialogPaneAC20.SetWindowPos(NULL, 150, 10, 400, 300, SWP_SHOWWINDOW | SWP_NOZORDER);
 	}
 
 }
@@ -222,8 +224,8 @@ BOOL CMFCDragDropFileView::OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEf
 			{
 				// Process the dropped data (e.g., add to a list, display it)
 				AfxMessageBox(CString(_T("CMFCDragDropFileView Dropped Text: ")) + lpszText);
-				m_wndMyDialogPane.wsText = lpszText;
-				m_wndMyDialogPane.UpdateData(FALSE);
+				m_wndMyDialogPaneAC20.wsText = lpszText;
+				m_wndMyDialogPaneAC20.UpdateData(FALSE);
 
 				GlobalUnlock(hGlobal);
 			}
@@ -366,14 +368,16 @@ void CMFCDragDropFileView::OnMouseMove(UINT nFlags, CPoint point)
 					hGlobal = GlobalAlloc(GMEM_MOVEABLE, 48 * sizeof(TCHAR));
 					if (hGlobal == NULL) return;
 					LPTSTR lpszText = (LPTSTR)GlobalLock(hGlobal);
+					if (lpszText) {
 #if 1
-					m_wndMyDialogPane.UpdateData(TRUE);
-					_tcscpy_s(lpszText, m_wndMyDialogPane.wsText.length() + 1, m_wndMyDialogPane.wsText.c_str());
+						m_wndMyDialogPaneAC20.UpdateData(TRUE);
+						_tcscpy_s(lpszText, m_wndMyDialogPaneAC20.wsText.length() + 1, m_wndMyDialogPaneAC20.wsText.c_str());
 #else
-					CString sText = _T("Data being dragged");
+						CString sText = _T("Data being dragged");
 
-					_tcscpy_s(lpszText, sText.GetLength() + 1, sText);
+						_tcscpy_s(lpszText, sText.GetLength() + 1, sText);
 #endif
+					}
 					GlobalUnlock(hGlobal);
 					src.CacheGlobalData(CF_UNICODETEXT, hGlobal);
 					dwDropEffect = src.DoDragDrop(DROPEFFECT_COPY | DROPEFFECT_MOVE);

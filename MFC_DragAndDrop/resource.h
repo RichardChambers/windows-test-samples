@@ -45,13 +45,14 @@
 #define IDS_DEBUG_TAB                   301
 #define IDS_FIND_TAB                    302
 #define IDS_EDIT_MENU                   306
-#define IDD_DIALOG1                     310
+#define IDD_DIALOG_AC20                 310
 #define IDC_EDIT1                       1000
-#define IDC_CHECK1                      1001
-#define IDC_CHECK2                      1002
-#define IDC_RADIO1                      1003
-#define IDC_RADIO2                      1004
-#define IDC_PANE_AC20_ID                1005
+#define IDC_EDIT2                       1001
+#define IDC_CHECK1                      1002
+#define IDC_CHECK2                      1003
+#define IDC_RADIO1                      1004
+#define IDC_RADIO2                      1005
+#define IDC_PANE_AC20_ID                1006
 
 // Next default values for new objects
 // 
@@ -59,7 +60,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        312
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1006
+#define _APS_NEXT_CONTROL_VALUE         1007
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif

@@ -53,7 +53,7 @@ protected:
 
 	int    myIcount;
 
-	CDialogPane m_wndMyDialogPane; // Member variable for the dialog
+	CDialogPane m_wndMyDialogPaneAC20; // Member variable for the dialog
 
 	wchar_t* str[3];
 	CRect rect;

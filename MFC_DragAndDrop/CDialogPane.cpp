@@ -12,12 +12,18 @@
 
 // CDialogPane dialog
 
+IMPLEMENT_DYNAMIC(CDialogDrop, CDialogEx)
+
+BEGIN_MESSAGE_MAP(CDialogDrop, CDialogEx)
+END_MESSAGE_MAP()
+
 int  CDialogPane::iCount = 0;
 
-IMPLEMENT_DYNAMIC(CDialogPane, CDialogEx)
+IMPLEMENT_DYNAMIC(CDialogPane, CDialogDrop)
 
 CDialogPane::CDialogPane(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_DIALOG1, pParent), myIcount(++iCount), checkMark1(0), checkMark2(0)
+	: CDialogDrop(IDD_DIALOG_AC20, pParent), iDropType(0), m_DraggingState(DraggingState::None),
+	myIcount(++iCount), usDeptNo(0), checkMark1(0), checkMark2(0)
 {
 
 }
@@ -30,33 +36,32 @@ BOOL CDialogPane::OnInitDialog()
 {
 	BOOL   bRet = TRUE;
 
-	bRet = CDialogEx::OnInitDialog();
-
-	if (!m_dropTarget.RegisterDialogPane(this))
-	{
-		TRACE(_T("Failed to register drop target\n"));
-	}
+	bRet = CDialogDrop::OnInitDialog();
 
 	return bRet;
 }
 
 void CDialogPane::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CDialogDrop::DoDataExchange(pDX);
 
 	CString csText(wsText.c_str());
 	int iCheckMark1 = checkMark1, iCheckMark2 = checkMark2;
+	int  iDeptNo = usDeptNo;
 
+	DDX_Text(pDX, IDC_EDIT2, iDeptNo);
 	DDX_Text(pDX, IDC_EDIT1, csText);
 	DDX_Check(pDX, IDC_CHECK1, iCheckMark1);
 	DDX_Check(pDX, IDC_CHECK2, iCheckMark2);
 
 	wsText = csText;
 	checkMark1 = iCheckMark1;  checkMark2 = iCheckMark2;
+	usDeptNo = iDeptNo;
 }
 
 void CDialogPane::PutData(DragDrop_Data_AC20& x)
 {
+	usDeptNo = x.deptNo;
 	wsText = x.deptName;
 	checkMark1 = x.ulStatus[0];
 	checkMark2 = x.ulStatus[1];
@@ -68,13 +73,14 @@ void CDialogPane::GetData(DragDrop_Data_AC20& x)
 {
 	UpdateData(TRUE);
 
+	x.deptNo = usDeptNo;
 	wcscpy_s(x.deptName, 20, wsText.c_str());
 	x.ulStatus[0] = checkMark1;
 	x.ulStatus[1] = checkMark2;
 }
 
 
-BEGIN_MESSAGE_MAP(CDialogPane, CDialogEx)
+BEGIN_MESSAGE_MAP(CDialogPane, CDialogDrop)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
@@ -181,7 +187,7 @@ void CDialogPane::OnLButtonDown(UINT nFlags, CPoint point)
 	swprintf_s(xBuff, 128, L"CDialogPane[%d]::OnLButtonDown()", myIcount);
 	p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
 
-	CDialogEx::OnLButtonDown(nFlags, point);
+	CDialogDrop::OnLButtonDown(nFlags, point);
 }
 
 void CDialogPane::OnMouseMove(UINT nFlags, CPoint point)
@@ -243,7 +249,7 @@ void CDialogPane::OnMouseMove(UINT nFlags, CPoint point)
 		p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
 	}
 
-	CDialogEx::OnMouseMove(nFlags, point);
+	CDialogDrop::OnMouseMove(nFlags, point);
 }
 
 // Don't forget OnLButtonUp to stop dragging if the button is released without moving enough
@@ -259,6 +265,6 @@ void CDialogPane::OnLButtonUp(UINT nFlags, CPoint point)
 
 	m_bDragging = FALSE;
 
-	CDialogEx::OnLButtonUp(nFlags, point);
+	CDialogDrop::OnLButtonUp(nFlags, point);
 }
 

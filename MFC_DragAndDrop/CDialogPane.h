@@ -22,18 +22,19 @@ struct DragDrop_Data_AC20 {
 
 #endif
 
-class CDialogPane : public CDialogEx
+
+class CDialogDrop : public CDialogEx
 {
-	DECLARE_DYNAMIC(CDialogPane)
+	DECLARE_DYNAMIC(CDialogDrop)
 
 protected:
-	class MyCOleDropTarget : public COleDropTarget
+	class PaneCOleDropTarget : public COleDropTarget
 	{
 	private:
-		CDialogPane* p;
+		CDialogDrop* m_pDropWnd;
 
 	public:
-		MyCOleDropTarget() : COleDropTarget(), p(nullptr) {}
+		PaneCOleDropTarget(CDialogDrop *pWnd = nullptr) : COleDropTarget(), m_pDropWnd(pWnd) { }
 
 		BOOL Register(CWnd* pWnd)
 		{
@@ -41,52 +42,101 @@ protected:
 			return COleDropTarget::Register(pWnd);
 		}
 
-		BOOL RegisterDialogPane(CDialogPane* pPane)
+		BOOL RegisterDialogPane(CDialogDrop* pPane)
 		{
 			ASSERT_VALID(this);
-			p = pPane;
+			m_pDropWnd = pPane;
 			return COleDropTarget::Register(pPane);
 		}
 
 		DROPEFFECT OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point)
 		{
 			ASSERT_VALID(this);
-			if (p && p->m_hWnd == pWnd->m_hWnd)
-				return p->OnDragEnter(pDataObject, dwKeyState, point);
+			BOOL b = pWnd->IsKindOf(RUNTIME_CLASS(CDialogDrop));
+			if (m_pDropWnd && m_pDropWnd->m_hWnd == pWnd->m_hWnd)
+				return m_pDropWnd->OnDragEnter(pDataObject, dwKeyState, point);
 			else
-				return COleDropTarget::OnDragEnter(pWnd, pDataObject, dwKeyState, point);
+				return DROPEFFECT_NONE;
 		}
 
 		DROPEFFECT OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point)
 		{
 			ASSERT_VALID(this);
-			if (p && p->m_hWnd == pWnd->m_hWnd)
-				return p->OnDragOver(pDataObject, dwKeyState, point);
+			BOOL b = pWnd->IsKindOf(RUNTIME_CLASS(CDialogDrop));
+			if (m_pDropWnd && m_pDropWnd->m_hWnd == pWnd->m_hWnd)
+				return m_pDropWnd->OnDragOver(pDataObject, dwKeyState, point);
 			else
-				return COleDropTarget::OnDragOver(pWnd, pDataObject, dwKeyState, point);
+				return DROPEFFECT_NONE;
 		}
 
 		void OnDragLeave(CWnd* pWnd)
 		{
 			ASSERT_VALID(this);
-			if (p && p->m_hWnd == pWnd->m_hWnd)
-				return p->OnDragLeave();
-			else
-				return COleDropTarget::OnDragLeave(pWnd);
+			BOOL b = pWnd->IsKindOf(RUNTIME_CLASS(CDialogDrop));
+			if (m_pDropWnd && m_pDropWnd->m_hWnd == pWnd->m_hWnd)
+				m_pDropWnd->OnDragLeave();
 		}
 
 		BOOL OnDrop(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point)
 		{
 			ASSERT_VALID(this);
-			if (p && p->m_hWnd == pWnd->m_hWnd)
-				return p->OnDrop(pDataObject, dropEffect, point);
+			BOOL b = pWnd->IsKindOf(RUNTIME_CLASS(CDialogDrop));
+			if (m_pDropWnd && m_pDropWnd->m_hWnd == pWnd->m_hWnd)
+				return m_pDropWnd->OnDrop(pDataObject, dropEffect, point);
 			else
-				return COleDropTarget::OnDrop(pWnd, pDataObject, dropEffect, point);
+				return FALSE;
 		}
+
+#if 0
+		// if this method is not provided then OnDrop() is called.
+		DROPEFFECT OnDropEx(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT dropDefault, DROPEFFECT dropList, CPoint point)
+		{
+			ASSERT_VALID(this);
+			BOOL b = pWnd->IsKindOf(RUNTIME_CLASS(CDialogDrop));
+			if (m_pDropWnd && m_pDropWnd->m_hWnd == pWnd->m_hWnd)
+				return m_pDropWnd->OnDropEx(pDataObject, dropDefault, dropList, point);
+			else
+				return DROPEFFECT_NONE;
+		}
+#endif
 	};
 
+	PaneCOleDropTarget m_dropTarget;
+
+	virtual BOOL OnInitDialog() {
+		BOOL   bRet = TRUE;
+
+		bRet = CDialogEx::OnInitDialog();
+
+		if (!m_dropTarget.RegisterDialogPane(this))
+		{
+			TRACE(_T("Failed to register drop target\n"));
+		}
+
+		return bRet;
+	}
+
+	virtual DROPEFFECT OnDragEnter(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point) { return DROPEFFECT_NONE; }
+	virtual DROPEFFECT OnDragOver(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point) { return DROPEFFECT_NONE; }
+	virtual void OnDragLeave() { }
+	virtual BOOL OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point) { return FALSE; }
+	virtual DROPEFFECT OnDropEx(COleDataObject* pDataObject, DROPEFFECT dropDefault, DROPEFFECT dropList, CPoint point) { return DROPEFFECT_NONE; }
+
+public:
+	CDialogDrop(UINT nIDTemplate, CWnd* pParent = nullptr) : CDialogEx(nIDTemplate, pParent) {}   // standard constructor
+	virtual ~CDialogDrop() {}
+
+	DECLARE_MESSAGE_MAP()
+};
+
+
+class CDialogPane : public CDialogDrop
+{
+	DECLARE_DYNAMIC(CDialogPane)
+
+protected:
+
 	int   iDropType;
-	MyCOleDropTarget m_dropTarget;
 	CPoint m_ptDragStart;
 	BOOL   m_bDragging = FALSE;
 
@@ -98,10 +148,10 @@ protected:
 
 	virtual BOOL OnInitDialog();
 
-	DROPEFFECT OnDragEnter(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-	DROPEFFECT OnDragOver(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-	void OnDragLeave();
-	BOOL OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
+	virtual DROPEFFECT OnDragEnter(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
+	virtual DROPEFFECT OnDragOver(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
+	virtual void OnDragLeave();
+	virtual BOOL OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
 
 public:
 	CDialogPane(CWnd* pParent = nullptr);   // standard constructor
@@ -112,15 +162,16 @@ public:
 	void PutData(DragDrop_Data_AC20& x);
 	void GetData(DragDrop_Data_AC20& x);
 
+	USHORT   usDeptNo;
 	std::wstring  wsText;
 	bool  checkMark1;
 	bool  checkMark2;
 
 	static int iCount;
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG1 };
+	enum { IDD = IDD_DIALOG_AC20 };
 #endif
 
 protected:
@@ -132,3 +183,4 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 };
+
