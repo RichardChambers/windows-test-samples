@@ -115,8 +115,6 @@ void CMFCDragDropFileView::OnInitialUpdate()
 			return;
 		}
 
-		m_wndMyDialogPaneAC20.DropType(DRAGDROP_DATA_AC20);
-
 		// Optional: Position the dialog within the view's client area
 		// Get the view's client rectangle
 		CRect rcClient;
@@ -224,7 +222,7 @@ BOOL CMFCDragDropFileView::OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEf
 			{
 				// Process the dropped data (e.g., add to a list, display it)
 				AfxMessageBox(CString(_T("CMFCDragDropFileView Dropped Text: ")) + lpszText);
-				m_wndMyDialogPaneAC20.wsText = lpszText;
+				wcscpy_s(m_wndMyDialogPaneAC20.m_DataRecord.deptName, 20, lpszText);
 				m_wndMyDialogPaneAC20.UpdateData(FALSE);
 
 				GlobalUnlock(hGlobal);
@@ -371,7 +369,7 @@ void CMFCDragDropFileView::OnMouseMove(UINT nFlags, CPoint point)
 					if (lpszText) {
 #if 1
 						m_wndMyDialogPaneAC20.UpdateData(TRUE);
-						_tcscpy_s(lpszText, m_wndMyDialogPaneAC20.wsText.length() + 1, m_wndMyDialogPaneAC20.wsText.c_str());
+						wcscpy_s(lpszText, 48, m_wndMyDialogPaneAC20.m_DataRecord.deptName);
 #else
 						CString sText = _T("Data being dragged");
 

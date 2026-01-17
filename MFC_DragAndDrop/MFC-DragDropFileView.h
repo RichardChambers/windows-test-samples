@@ -6,7 +6,7 @@
 
 #include <afxole.h>
 
-#include "CDialogPane.h"
+#include "DialogPane_AC20.h"
 
 class CMFCDragDropFileView : public CView
 {
@@ -53,7 +53,7 @@ protected:
 
 	int    myIcount;
 
-	CDialogPane m_wndMyDialogPaneAC20; // Member variable for the dialog
+	DialogPane_AC20 m_wndMyDialogPaneAC20; // Member variable for the dialog
 
 	wchar_t* str[3];
 	CRect rect;

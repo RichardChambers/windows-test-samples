@@ -6,28 +6,37 @@
 
 // CDialogPane dialog
 
-#if !defined(DRAGDROP_DATA_AC20)
-
 // Drag and Drop data types follow. These indicate
 // the type of data that is being dragged allowing us
 // to drag different types of data.
-#define DRAGDROP_DATA_AC20   CF_PRIVATEFIRST
-
-
-struct DragDrop_Data_AC20 {
-	USHORT   deptNo;
-	wchar_t  deptName[20];
-	ULONG    ulStatus[6];
-};
-
-#endif
-
+#define DRAGDROP_DATA_AC20      CF_PRIVATEFIRST
+#define DRAGDROP_DATA_AC68      (DRAGDROP_DATA_AC20 + 1)
 
 class CDialogDrop : public CDialogEx
 {
 	DECLARE_DYNAMIC(CDialogDrop)
 
 protected:
+	class PaneCOleDataSource : public COleDataSource
+	{
+	public:
+		PaneCOleDataSource() : COleDataSource() { }
+		virtual ~PaneCOleDataSource() {}
+
+		// Overidables
+		virtual BOOL OnRenderGlobalData(LPFORMATETC lpFormatEtc, HGLOBAL* phGlobal);
+		virtual BOOL OnRenderFileData(LPFORMATETC lpFormatEtc, CFile* pFile);
+		virtual BOOL OnRenderData(LPFORMATETC lpFormatEtc, LPSTGMEDIUM lpStgMedium);
+		// OnRenderFileData and OnRenderGlobalData are called by
+		//  the default implementation of OnRenderData.
+
+		virtual BOOL OnSetData(LPFORMATETC lpFormatEtc, LPSTGMEDIUM lpStgMedium,
+			BOOL bRelease);
+		// used only in COleServerItem implementation
+
+		DECLARE_MESSAGE_MAP()
+	};
+
 	class PaneCOleDropTarget : public COleDropTarget
 	{
 	private:
@@ -125,61 +134,6 @@ protected:
 public:
 	CDialogDrop(UINT nIDTemplate, CWnd* pParent = nullptr) : CDialogEx(nIDTemplate, pParent) {}   // standard constructor
 	virtual ~CDialogDrop() {}
-
-	DECLARE_MESSAGE_MAP()
-};
-
-
-class CDialogPane : public CDialogDrop
-{
-	DECLARE_DYNAMIC(CDialogPane)
-
-protected:
-
-	int   iDropType;
-	CPoint m_ptDragStart;
-	BOOL   m_bDragging = FALSE;
-
-	enum class DraggingState { None = 0, Entering, Dragging, Leaving };
-
-	DraggingState m_DraggingState;
-
-	int    myIcount;
-
-	virtual BOOL OnInitDialog();
-
-	virtual DROPEFFECT OnDragEnter(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-	virtual DROPEFFECT OnDragOver(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-	virtual void OnDragLeave();
-	virtual BOOL OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
-
-public:
-	CDialogPane(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~CDialogPane();
-
-	int  DropType(int iType) { int iT = iDropType;  iDropType = iType; return iT; }
-
-	void PutData(DragDrop_Data_AC20& x);
-	void GetData(DragDrop_Data_AC20& x);
-
-	USHORT   usDeptNo;
-	std::wstring  wsText;
-	bool  checkMark1;
-	bool  checkMark2;
-
-	static int iCount;
-
-	// Dialog Data
-#ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG_AC20 };
-#endif
-
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };
