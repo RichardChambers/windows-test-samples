@@ -133,10 +133,7 @@ void CMFCDragDropFileView::OnInitialUpdate()
 DROPEFFECT CMFCDragDropFileView::OnDragEnter(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point)
 {
 	CMainFrame* p = static_cast<CMainFrame*> (AfxGetApp()->m_pMainWnd);
-	wchar_t xBuff[128] = { 0 };
-
-	swprintf_s(xBuff, 128, L"    CMFCDragDropFileView[%d]::OnDragEnter()", myIcount);
-	p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+	p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"    CMFCDragDropFileView[%d]::OnDragEnter()", myIcount);
 
 	m_DraggingState = DraggingState::Entering;
 
@@ -153,10 +150,7 @@ DROPEFFECT CMFCDragDropFileView::OnDragOver(COleDataObject* pDataObject, DWORD d
 {
 	if (m_DraggingState != DraggingState::Dragging) {
 		CMainFrame* p = static_cast<CMainFrame*> (AfxGetApp()->m_pMainWnd);
-		wchar_t xBuff[128] = { 0 };
-
-		swprintf_s(xBuff, 128, L"    CMFCDragDropFileView[%d]::OnDragOver()", myIcount);
-		p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+		p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"    CMFCDragDropFileView[%d]::OnDragOver()", myIcount);
 
 		m_DraggingState = DraggingState::Dragging;
 	}
@@ -173,11 +167,7 @@ DROPEFFECT CMFCDragDropFileView::OnDragOver(COleDataObject* pDataObject, DWORD d
 void CMFCDragDropFileView::OnDragLeave()
 {
 	CMainFrame* p = static_cast<CMainFrame*> (AfxGetApp()->m_pMainWnd);
-
-	wchar_t xBuff[128] = { 0 };
-
-	swprintf_s(xBuff, 128, L"    CMFCDragDropFileView[%d]::OnDragLeave()", myIcount);
-	p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+	p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"    CMFCDragDropFileView[%d]::OnDragLeave()", myIcount);
 
 	m_DraggingState = DraggingState::Leaving;
 }
@@ -190,24 +180,18 @@ BOOL CMFCDragDropFileView::OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEf
 
 	dataAvailable = (pDataObject->IsDataAvailable(CF_UNICODETEXT) * 0x01) | (pDataObject->IsDataAvailable(DRAGDROP_DATA_AC20) * 0x02);
 
-	wchar_t xBuff[128] = { 0 };
-
 	switch (dataAvailable) {
 	case 0:
-		swprintf_s(xBuff, 128, L"    CMFCDragDropFileView[%d]::OnDrop() case 0", myIcount);
-		p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+		p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"    CMFCDragDropFileView[%d]::OnDrop() case 0", myIcount);
 		break;
 	case 1:
-		swprintf_s(xBuff, 128, L"    CMFCDragDropFileView[%d]::OnDrop() case 1: CF_UNICODETEXT", myIcount);
-		p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+		p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"    CMFCDragDropFileView[%d]::OnDrop() case 1: CF_UNICODETEXT", myIcount);
 		break;
 	case 2:
-		swprintf_s(xBuff, 128, L"    CMFCDragDropFileView[%d]::OnDrop() case 2: DRAGDROP_DATA_AC20", myIcount);
-		p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+		p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"    CMFCDragDropFileView[%d]::OnDrop() case 2: DRAGDROP_DATA_AC20", myIcount);
 		break;
 	default:
-		swprintf_s(xBuff, 128, L"    CMFCDragDropFileView[%d]::OnDrop() default", myIcount);
-		p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+		p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"    CMFCDragDropFileView[%d]::OnDrop() default", myIcount);
 		break;
 	}
 
@@ -324,9 +308,7 @@ void CMFCDragDropFileView::OnLButtonDown(UINT nFlags, CPoint point)
 	m_bDragging = TRUE;
 
 	CMainFrame* p = static_cast<CMainFrame*> (AfxGetApp()->m_pMainWnd);
-	wchar_t  xBuff[128] = { 0 };
-	swprintf_s(xBuff, 128, L"CMFCDragDropFileView[%d]::OnLButtonDown()", myIcount);
-	p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+	p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"CMFCDragDropFileView[%d]::OnLButtonDown()", myIcount);
 
 	CView::OnLButtonDown(nFlags, point);
 }
@@ -336,10 +318,7 @@ void CMFCDragDropFileView::OnMouseMove(UINT nFlags, CPoint point)
 	if (m_bDragging && (abs(point.x - m_ptDragStart.x) > 5 || abs(point.y - m_ptDragStart.y) > 5))
 	{
 		CMainFrame* p = static_cast<CMainFrame*> (AfxGetApp()->m_pMainWnd);
-
-		wchar_t  xBuff[128] = { 0 };
-		swprintf_s(xBuff, 128, L"CMFCDragDropFileView[%d]::OnMouseMove() Start", myIcount);
-		p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+		p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"CMFCDragDropFileView[%d]::OnMouseMove() Start", myIcount);
 
 		// Start the drag operation
 
@@ -399,27 +378,23 @@ void CMFCDragDropFileView::OnMouseMove(UINT nFlags, CPoint point)
 		}
 
 		if (dwDropEffect == DROPEFFECT_NONE) {
-			swprintf_s(xBuff, 128, L"CMFCDragDropFileView[%d]::OnMouseMove() dwDropEffect == DROPEFFECT_NONE", myIcount);
-			p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+			p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"CMFCDragDropFileView[%d]::OnMouseMove() dwDropEffect == DROPEFFECT_NONE", myIcount);
 		}
 
 		// Optional: Handle the result of the drop operation (e.g., delete source item if moved)
 		if (dwDropEffect & DROPEFFECT_MOVE)
 		{
 			// Remove item from source view
-			swprintf_s(xBuff, 128, L"CMFCDragDropFileView[%d]::OnMouseMove() dwDropEffect & DROPEFFECT_MOVE", myIcount);
-			p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+			p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"CMFCDragDropFileView[%d]::OnMouseMove() dwDropEffect & DROPEFFECT_MOVE", myIcount);
 		}
 
 		if (dwDropEffect & DROPEFFECT_COPY)
 		{
-			swprintf_s(xBuff, 128, L"CMFCDragDropFileView[%d]::OnMouseMove() dwDropEffect & DROPEFFECT_COPY", myIcount);
-			p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+			p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"CMFCDragDropFileView[%d]::OnMouseMove() dwDropEffect & DROPEFFECT_COPY", myIcount);
 		}
 
 		m_bDragging = FALSE;
-		swprintf_s(xBuff, 128, L"CMFCDragDropFileView[%d]::OnMouseMove() End", myIcount);
-		p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+		p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"CMFCDragDropFileView[%d]::OnMouseMove() End", myIcount);
 	}
 
 	CView::OnMouseMove(nFlags, point);
@@ -431,9 +406,7 @@ void CMFCDragDropFileView::OnLButtonUp(UINT nFlags, CPoint point)
 	if (m_bDragging)
 	{
 		CMainFrame* p = static_cast<CMainFrame*> (AfxGetApp()->m_pMainWnd);
-		wchar_t  xBuff[128] = { 0 };
-		swprintf_s(xBuff, 128, L"CMFCDragDropFileView[%d]::OnLButtonUp()", myIcount);
-		p->WriteToOutputWindow(COutputWnd::WindowType::Build, xBuff);
+		p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"CMFCDragDropFileView[%d]::OnLButtonUp()", myIcount);
 	}
 
 	m_bDragging = FALSE;

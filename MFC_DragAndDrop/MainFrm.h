@@ -78,6 +78,8 @@ public:
 		m_wndOutput.WriteToOutputWindow(wid, str);
 	}
 
+	int WriteFormattedToOutput(const COutputWnd::WindowType wid, const wchar_t* format, ...);
+
 };
 
 

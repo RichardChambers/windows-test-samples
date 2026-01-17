@@ -39,6 +39,32 @@ static UINT indicators[] =
 	ID_INDICATOR_SCRL,
 };
 
+
+int CMainFrame::WriteFormattedToOutput(const COutputWnd::WindowType wid, const wchar_t* format, ...)
+{
+	// 1. Initialize the variable argument list
+	int iRet = 0;
+
+	va_list args;
+	va_start(args, format);
+
+	// 2. Format the string into a buffer
+	wchar_t xBuff[512]; // Increased size for safety
+	iRet = vswprintf_s(xBuff, 512, format, args);
+
+	// 3. Clean up the argument list
+	va_end(args);
+
+	// 4. Send to the output window
+	if (iRet < 0) {
+		swprintf_s(xBuff, 512, L"** vswprintf_s() error. iRet = %d  errno = %d", iRet, errno);
+	}
+
+	WriteToOutputWindow(wid, xBuff);
+
+	return iRet;
+}
+
 // CMainFrame construction/destruction
 
 CMainFrame::CMainFrame() noexcept
