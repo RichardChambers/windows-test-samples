@@ -1,0 +1,197 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "bitmap1.bmp"
+
+MYBITMAP                BITMAP                  "bitmap1.bmp"
+
+MYBITMAP1234            BITMAP                  "bitmap1.bmp"
+
+MYJUNK                  THING                   "bitmap1.bmp"
+MYJUN3                  THUNG                   "bitmap1.bmp"
+MYJUN4                  THING1234               "bitmap1.bmp"
+
+// using the same NAME for two different TYPE
+IDC_JUNK01              THENG                   "bitmap1.bmp"
+IDC_JUNK01              THING1234               "bitmap1.bmp"
+
+MYJUN2                  THING2
+{
+    L"A wchar_t  string\0",
+/*    "An ANSI string\0",      ANSI string seems to cause a problem.*/
+    101,
+    192168L,
+    0x1ff1
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOGEX 0, 0, 287, 166
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog Box"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,198,145,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,230,145,50,14
+    CONTROL         "Check box 1",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,20,155,21
+    EDITTEXT        IDC_EDIT1,142,41,106,25,ES_AUTOHSCROLL
+    LTEXT           "Static label for edit box",IDC_STATIC,41,47,98,15
+    CONTROL         "",IDC_SLIDER1,"msctls_trackbar32",TBS_BOTH | WS_TABSTOP,143,74,104,23
+    LTEXT           "Static label for slider control.",IDC_STATIC,35,81,103,16
+    CONTROL         "Radio1",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON,33,100,68,12
+    CONTROL         "Radio2",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,34,115,68,17
+    CONTROL         "Radio3",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,34,133,58,14
+END
+
+IDD_DIALOG2 DIALOGEX 0, 0, 255, 131
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog 2 empty"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,198,110,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,198,110,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 280
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+    END
+
+    IDD_DIALOG2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 248
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 124
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG2 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_CURSOR1             CURSOR                  "cursor1.cur"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_STRING101           "this is string 101"
+    IDS_STRING102           "this is string 102"
+    IDS_STRING103           "this is string 103"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_STRNG_01             "STRNG_01 test string id"
+    IDS_STRNG_02             "STRNG_02 test string id"
+    IDS_STRNG_03             "STRNG_03 test string id"
+    IDS_STRNG_04             "STRNG_04 test string id"
+    IDS_STRNG_05             "STRNG_05 test string id"
+    IDS_STRNG_06             "STRNG_06 test string id"
+    IDS_STRNG_07             "STRNG_07 test string id"
+    IDS_STRNG_08             "STRNG_08 test string id"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
