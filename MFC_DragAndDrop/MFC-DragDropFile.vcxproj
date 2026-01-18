@@ -187,6 +187,7 @@
     <ClInclude Include="CDialogPane.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="DialogPane_AC20.h" />
+    <ClInclude Include="DialogPane_AC68.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFC-DragDropFile.h" />
@@ -202,6 +203,7 @@
     <ClCompile Include="CDialogPane.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="DialogPane_AC20.cpp" />
+    <ClCompile Include="DialogPane_AC68.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFC-DragDropFile.cpp" />
     <ClCompile Include="MFC-DragDropFileDoc.cpp" />

@@ -12,8 +12,7 @@ int  DialogPane_AC20::iCount = 0;
 IMPLEMENT_DYNAMIC(DialogPane_AC20, CDialogDrop)
 
 DialogPane_AC20::DialogPane_AC20(CWnd* pParent /*=nullptr*/)
-	: CDialogDrop(IDD_DIALOG_AC20, pParent), iDropType(DRAGDROP_DATA_AC20), m_DraggingState(DraggingState::None),
-	myIcount(++iCount)
+	: CDialogDrop(IDD_DIALOG_AC20, pParent), myIcount(++iCount)
 {
 	std::memset(&m_DataRecord, 0, sizeof(m_DataRecord));
 }
@@ -39,20 +38,24 @@ void DialogPane_AC20::DoDataExchange(CDataExchange* pDX)
 	CString csText(m_DataRecord.deptName);
 	int iCheckMark1 = (m_DataRecord.ulStatus[0] & 0x01) != 0;
 	int iCheckMark2 = (m_DataRecord.ulStatus[0] & 0x02) != 0;
+	int iRadioMark1 = (m_DataRecord.ulStatus[1] & 0x01);
 
 	DDX_Text(pDX, IDC_EDIT2, iDeptNo);
 	DDX_Text(pDX, IDC_EDIT1, csText);
 	DDX_Check(pDX, IDC_CHECK1, iCheckMark1);
 	DDX_Check(pDX, IDC_CHECK2, iCheckMark2);
+	DDX_Radio(pDX, IDC_RADIO1, iRadioMark1);
 
 	if (pDX->m_bSaveAndValidate) {
 		m_DataRecord.ulStatus[0] &= ~(ULONG)0x01;
 		m_DataRecord.ulStatus[0] &= ~(ULONG)0x02;
+		m_DataRecord.ulStatus[1] &= ~(ULONG)0x01;
 
-		wcscpy_s(m_DataRecord.deptName, 20, (LPCWSTR)csText);
 		m_DataRecord.deptNo = iDeptNo;
+		wcscpy_s(m_DataRecord.deptName, 20, (LPCWSTR)csText);
 		m_DataRecord.ulStatus[0] |= (iCheckMark1) ? 0x01 : 0x00;
 		m_DataRecord.ulStatus[0] |= (iCheckMark2) ? 0x02 : 0x00;
+		m_DataRecord.ulStatus[1] |= iRadioMark1;
 	}
 }
 
@@ -90,7 +93,7 @@ DROPEFFECT DialogPane_AC20::OnDragEnter(COleDataObject* pDataObject, DWORD dwKey
 	m_DraggingState = DraggingState::Entering;
 
 	// Check if the data format is acceptable (e.g., CF_TEXT)
-	if (pDataObject->IsDataAvailable(iDropType))
+	if (DropTypeValid(pDataObject))
 		return DROPEFFECT_COPY; // Show copy cursor
 	else
 		return DROPEFFECT_NONE; // Show "not allowed" cursor
@@ -106,7 +109,7 @@ DROPEFFECT DialogPane_AC20::OnDragOver(COleDataObject* pDataObject, DWORD dwKeyS
 	}
 
 	// Same check as OnDragEnter to provide continuous feedback
-	if (pDataObject->IsDataAvailable(iDropType))
+	if (DropTypeValid(pDataObject))
 		return DROPEFFECT_COPY; // Show copy cursor
 	else
 		return DROPEFFECT_NONE;
@@ -126,7 +129,7 @@ BOOL DialogPane_AC20::OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEffect,
 {
 	CMainFrame* p = static_cast<CMainFrame*> (AfxGetApp()->m_pMainWnd);
 
-	if (iDropType == DRAGDROP_DATA_AC20 && pDataObject->IsDataAvailable(iDropType))
+	if (DropTypeValid(pDataObject))
 	{
 		p->WriteFormattedToOutput(COutputWnd::WindowType::Build, L"    DialogPane_AC20[%d]::OnDrop() DRAGDROP_DATA_AC20", myIcount);
 
@@ -182,22 +185,20 @@ void DialogPane_AC20::OnMouseMove(UINT nFlags, CPoint point)
 
 		// Call DoDragDrop
 		DWORD dwDropEffect = DROPEFFECT_NONE;
-		switch (iDropType) {
-		case DRAGDROP_DATA_AC20:
 		{
 			hGlobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(DragDrop_Data_AC20));
 			ASSERT(hGlobal);
-			if (hGlobal == NULL) return;
-			DragDrop_Data_AC20* pAC20 = static_cast<DragDrop_Data_AC20*>(GlobalLock(hGlobal));
+			if (hGlobal) {
 
-			UpdateData(TRUE);
-			if (pAC20) GetData(*pAC20);
+				DragDrop_Data_AC20* pAC20 = static_cast<DragDrop_Data_AC20*>(GlobalLock(hGlobal));
 
-			GlobalUnlock(hGlobal);
-			src.CacheGlobalData(DRAGDROP_DATA_AC20, hGlobal);
-			dwDropEffect = src.DoDragDrop(DROPEFFECT_COPY | DROPEFFECT_MOVE);
-		}
-		break;
+				UpdateData(TRUE);
+				if (pAC20) GetData(*pAC20);
+
+				GlobalUnlock(hGlobal);
+				src.CacheGlobalData(DRAGDROP_DATA_AC20, hGlobal);
+				dwDropEffect = src.DoDragDrop(DROPEFFECT_COPY | DROPEFFECT_MOVE);
+			}
 		}
 
 		if (dwDropEffect == DROPEFFECT_NONE) {

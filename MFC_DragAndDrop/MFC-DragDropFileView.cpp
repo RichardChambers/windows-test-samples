@@ -111,7 +111,7 @@ void CMFCDragDropFileView::OnInitialUpdate()
 		if (!m_wndMyDialogPaneAC20.Create(IDD_DIALOG_AC20, this))
 		{
 			// Handle creation failure
-			TRACE0("Warning: Dialog creation failed.\n");
+			TRACE0("Warning: Dialog m_wndMyDialogPaneAC20 creation failed.\n");
 			return;
 		}
 
@@ -125,6 +125,30 @@ void CMFCDragDropFileView::OnInitialUpdate()
 		// Set the dialog's position and size
 		// Example: place it in the top-left corner with specific dimensions
 		m_wndMyDialogPaneAC20.SetWindowPos(NULL, 150, 10, 400, 300, SWP_SHOWWINDOW | SWP_NOZORDER);
+	}
+
+	if (m_wndMyDialogPaneAC68.m_hWnd == NULL)
+	{
+		// Create the modeless dialog as a child of the view
+		// IDD_MY_DIALOG_PANE is the dialog resource ID
+		// "this" points to the CView parent
+		if (!m_wndMyDialogPaneAC68.Create(IDD_DIALOG_AC68, this))
+		{
+			// Handle creation failure
+			TRACE0("Warning: Dialog m_wndMyDialogPaneAC68 creation failed.\n");
+			return;
+		}
+
+		// Optional: Position the dialog within the view's client area
+		// Get the view's client rectangle
+		CRect rcClient;
+		GetClientRect(&rcClient);
+		CRect rcDialog;
+		m_wndMyDialogPaneAC68.GetClientRect(&rcDialog);
+
+		// Set the dialog's position and size
+		// Example: place it in the top-left corner with specific dimensions
+		m_wndMyDialogPaneAC68.SetWindowPos(NULL, 150, 310, 400, 300, SWP_SHOWWINDOW | SWP_NOZORDER);
 	}
 
 }

@@ -112,6 +112,19 @@ protected:
 
 	PaneCOleDropTarget m_dropTarget;
 
+	CPoint m_ptDragStart;
+	BOOL   m_bDragging = FALSE;
+
+	enum class DraggingState { None = 0, Entering, Dragging, Leaving };
+
+	DraggingState m_DraggingState;
+
+	virtual int DropTypeValid(COleDataObject* pDataObject) {
+		int iDropType = 0;
+
+		return iDropType;
+	}
+
 	virtual BOOL OnInitDialog() {
 		BOOL   bRet = TRUE;
 
@@ -132,7 +145,7 @@ protected:
 	virtual DROPEFFECT OnDropEx(COleDataObject* pDataObject, DROPEFFECT dropDefault, DROPEFFECT dropList, CPoint point) { return DROPEFFECT_NONE; }
 
 public:
-	CDialogDrop(UINT nIDTemplate, CWnd* pParent = nullptr) : CDialogEx(nIDTemplate, pParent) {}   // standard constructor
+	CDialogDrop(UINT nIDTemplate, CWnd* pParent = nullptr) : CDialogEx(nIDTemplate, pParent), m_DraggingState(DraggingState::None) {}   // standard constructor
 	virtual ~CDialogDrop() {}
 
 	DECLARE_MESSAGE_MAP()

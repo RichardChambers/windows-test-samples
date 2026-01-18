@@ -54,6 +54,9 @@
     <ClInclude Include="DialogPane_AC20.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DialogPane_AC68.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFC-DragDropFile.cpp">
@@ -84,6 +87,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DialogPane_AC20.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogPane_AC68.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
