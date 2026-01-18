@@ -20,8 +20,10 @@ protected:
 	class PaneCOleDataSource : public COleDataSource
 	{
 	public:
-		PaneCOleDataSource() : COleDataSource() { }
-		virtual ~PaneCOleDataSource() {}
+		PaneCOleDataSource();
+		virtual ~PaneCOleDataSource();
+
+		void InitFormats();
 
 		// Overidables
 		virtual BOOL OnRenderGlobalData(LPFORMATETC lpFormatEtc, HGLOBAL* phGlobal);
@@ -34,7 +36,6 @@ protected:
 			BOOL bRelease);
 		// used only in COleServerItem implementation
 
-		DECLARE_MESSAGE_MAP()
 	};
 
 	class PaneCOleDropTarget : public COleDropTarget
@@ -122,6 +123,7 @@ protected:
 	virtual int DropTypeValid(COleDataObject* pDataObject) {
 		int iDropType = 0;
 
+		TRACE(L"** CDialogDrop.DropTypeValid() not overriden.\n");
 		return iDropType;
 	}
 
