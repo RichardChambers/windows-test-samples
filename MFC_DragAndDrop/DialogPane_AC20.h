@@ -42,6 +42,10 @@ public:
 
 	DragDrop_Data_AC20  m_DataRecord;
 
+#if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
+	CYellowEdit m_wndYellowEdit;
+#endif
+
 	static int iCount;
 
 	// Dialog Data

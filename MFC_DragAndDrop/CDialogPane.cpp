@@ -17,7 +17,17 @@ IMPLEMENT_DYNAMIC(CDialogDrop, CDialogEx)
 BEGIN_MESSAGE_MAP(CDialogDrop, CDialogEx)
 END_MESSAGE_MAP()
 
+// -----------------------------------
+// replacement for the standard CEdit or "Edit" control 
+#if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
 
+IMPLEMENT_DYNAMIC(CYellowEdit, CEdit)
+
+BEGIN_MESSAGE_MAP(CYellowEdit, CEdit)
+    ON_WM_CTLCOLOR_REFLECT()
+END_MESSAGE_MAP()
+#endif
+// ---------------------------------
 
 // PaneCOleDataSource
 

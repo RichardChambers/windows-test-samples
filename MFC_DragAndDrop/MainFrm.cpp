@@ -8,6 +8,8 @@
 
 #include "MainFrm.h"
 
+#include "CDialogPane.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -82,6 +84,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	BOOL bNameValid;
+
+#if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
+	// This registers the window class for our Edit box with a yellow background.
+	// The window class of "YellowEdit" has to be registered before it can be
+	// used in a CONTROL resouce directive.
+	CYellowEdit::RegisterWindowClass();
+#endif
 
 	CMDITabInfo mdiTabParams;
 	mdiTabParams.m_style = CMFCTabCtrl::STYLE_3D_ONENOTE; // other styles available...

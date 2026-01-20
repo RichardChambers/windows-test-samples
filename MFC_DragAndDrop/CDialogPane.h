@@ -153,3 +153,101 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
+
+// Extending a standard dialog control type for special effects and behavior.
+// See TN062: Message Reflection for Windows Controls.
+//https://learn.microsoft.com/en-us/cpp/mfc/tn062-message-reflection-for-windows-controls?view=msvc-170
+
+// Using this new control in a dialog requires a couple of changes from a standard control.
+//  - change to the resource file
+//  - registration of the new window class
+//  - change to the DoDataExchange() logic
+
+// Resource file directive
+//         CONTROL         "", IDC_EDIT1, "YellowEdit", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 75, 31, 100, 12
+
+// Register the Window class before the dialog is created.
+
+// Properly initialize the user defined control in the DoDataExchange() function then set/get the value
+//    	DDX_Control(pDX, IDC_EDIT1, m_wndYellowEdit);     // initialize the user define control
+//      DDX_Text(pDX, IDC_EDIT1, csText);                 // perform data transfer
+
+// The following define will allow use of an Edit box with a yellow background
+// rather than a stadard Edit box.
+// Setting this to 1 will include the source code changes needed.
+// You can also search this defined constant to see the various changes needed.
+#define USE_CYELLOWEDIT  0
+
+#if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
+
+class CYellowEdit : public CEdit
+{
+	DECLARE_DYNAMIC(CYellowEdit)
+
+private:
+	COLORREF  m_clrText;       // color for the text.
+	COLORREF  m_clrBkgnd;      // color for the solid brush used to pain the background.
+	CBrush    m_brBkgnd;       // solid brush for painting the background
+
+public:
+	CYellowEdit() : CEdit::CEdit()
+	{
+
+		m_clrText = RGB(0, 0, 0);          // color of the text. all zeros is black.
+		m_clrBkgnd = RGB(255, 255, 255);     // color of the background. 
+		m_brBkgnd.CreateSolidBrush(m_clrBkgnd);
+	}
+
+	COLORREF  SetChangeColor(int iState) {
+		COLORREF savedColor = m_clrBkgnd;
+
+		switch (iState) {
+		case 0:
+			m_clrBkgnd = RGB(255, 255, 255);     // color of the background. 
+			break;
+		case 1:
+			m_clrBkgnd = RGB(255, 255, 0);     // color of the background. 
+			break;
+		}
+
+		m_brBkgnd.DeleteObject();
+		m_brBkgnd.CreateSolidBrush(m_clrBkgnd);
+
+		return savedColor;
+	}
+
+	static BOOL RegisterWindowClass() {
+		// Code to be invoked at application startup to register the window
+		// class for our new version of the Edit box control.
+		// The new window class must be registered before it can be used
+		// in a dialog template with the CONTROL resource directive.
+
+		WNDCLASS wc;
+
+		// Get info from the standard EDIT class to inherit its base behavior
+		if (!::GetClassInfo(NULL, _T("EDIT"), &wc))
+			return FALSE;
+
+		// Modify the essential fields for your custom class
+		wc.lpszClassName = _T("YellowEdit"); // Must match the CONTROL directive used in your resource file
+		wc.hInstance = AfxGetInstanceHandle();
+
+		// Register with MFC's helper to ensure automatic cleanup
+		return AfxRegisterClass(&wc);
+	}
+
+	HBRUSH CtlColor(CDC* pDC, UINT nCtlColor)
+	{
+		// TODO: Change any attributes of the DC here
+		// TODO: Return a non-NULL brush if the
+		//       parent's handler should not be called
+
+		pDC->SetTextColor(m_clrText);   // color of the text
+		pDC->SetBkColor(m_clrBkgnd);    // color of the text background
+		return (HBRUSH)m_brBkgnd.GetSafeHandle();     // ctl bkgnd
+	}
+
+	DECLARE_MESSAGE_MAP()
+};
+
+#endif
