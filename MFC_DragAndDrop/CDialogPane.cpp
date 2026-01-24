@@ -15,6 +15,11 @@
 IMPLEMENT_DYNAMIC(CDialogDrop, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CDialogDrop, CDialogEx)
+#if defined(ENABLE_WM_COPY_PASTE_OVERRIDE) && (ENABLE_WM_COPY_PASTE_OVERRIDE == 1)
+    ON_WM_GETDLGCODE()
+    ON_MESSAGE(WM_PASTE, OnPaste)
+    ON_MESSAGE(WM_COPY, OnCopy)
+#endif
 END_MESSAGE_MAP()
 
 // -----------------------------------

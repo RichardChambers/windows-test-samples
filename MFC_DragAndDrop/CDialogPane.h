@@ -146,6 +146,146 @@ protected:
 	virtual BOOL OnDrop(COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point) { return FALSE; }
 	virtual DROPEFFECT OnDropEx(COleDataObject* pDataObject, DROPEFFECT dropDefault, DROPEFFECT dropList, CPoint point) { return DROPEFFECT_NONE; }
 
+// The following define will allow use of Control-v to perform
+// a paste of the data in a dialog box into the various controls
+// of a dialog box.
+// Setting this to 1 will include the source code changes needed.
+// You can also search this defined constant to see the various changes needed.
+#define ENABLE_WM_COPY_PASTE_OVERRIDE   0
+
+#if defined(ENABLE_WM_COPY_PASTE_OVERRIDE) && (ENABLE_WM_COPY_PASTE_OVERRIDE == 1)
+	// Implement WM_COPY and WM_PASTE commands for the entire dialog.
+	// The copy/paste must be done in an Edit box so that this code will
+	// actually see a Control-c or Control-v key press and be able to process it.
+	// 
+	// Alternatively, the left button down handler for the dialog box can
+	// use the SetFocus() function to set the focust to the dialog box or
+	// the first control with a tab stop.
+	// 
+	// With this code enabled a Control-c to copy text or a Control-v to
+	// paste text into a specific Edit box no longer works.
+	// This code intercepts the Control-v keypress and sends a WM_PASTE message
+	// to the dialog and not the specific Edit box.
+
+	// Add to Message Map: ON_WM_GETDLGCODE()
+	UINT OnGetDlgCode() {
+		return DLGC_WANTALLKEYS; // Tells Windows the dialog wants all key messages
+	}
+
+	void OnLButtonDown(UINT nFlags, CPoint point) {
+		SetFocus();
+		CDialogEx::OnLButtonDown(nFlags, point);
+	}
+
+	virtual BOOL PreTranslateMessage(MSG* pMsg) {
+		if (pMsg->message == WM_KEYDOWN) {
+			bool bCtrl = (::GetKeyState(VK_CONTROL) & 0x8000) != 0;
+
+			if (bCtrl && pMsg->wParam == 'V') {
+				// Manually trigger the dialog's paste handler
+				CWnd* pFocusWnd = GetFocus();
+
+				if (pFocusWnd != nullptr) {
+					TCHAR szClassName[256];
+					::GetClassName(pFocusWnd->GetSafeHwnd(), szClassName, 256);
+					CString strClass(szClassName);
+
+					// If it is an Edit or RichEdit control, bypass our global logic
+					// to let the control handle its own copy/paste.
+					// However the SetFocus() appears to make the first Edit control
+					// the focus anyway so this always works.
+					if (strClass.CompareNoCase(_T("Edit")) == 0 ||
+						strClass.CompareNoCase(_T("RichEdit20W")) == 0 ||
+						strClass.Find(_T("AfxWnd")) != -1) // Optional: handle some MFC-specific wrappers
+					{
+						return CDialogEx::PreTranslateMessage(pMsg);
+					}
+				}
+				SendMessage(WM_PASTE);
+				return TRUE; // Stop the default single-box paste
+			}
+			else if (bCtrl && pMsg->wParam == 'C') {
+				// Manually trigger the dialog's copy handler
+				CWnd* pFocusWnd = GetFocus();
+
+				if (pFocusWnd != nullptr) {
+					TCHAR szClassName[256];
+					::GetClassName(pFocusWnd->GetSafeHwnd(), szClassName, 256);
+					CString strClass(szClassName);
+
+					// If it is an Edit or RichEdit control, bypass our global logic
+					// to let the control handle its own copy/paste.
+					if (strClass.CompareNoCase(_T("Edit")) == 0 ||
+						strClass.CompareNoCase(_T("RichEdit20W")) == 0 ||
+						strClass.Find(_T("AfxWnd")) != -1) // Optional: handle some MFC-specific wrappers
+					{
+						return CDialogEx::PreTranslateMessage(pMsg);
+					}
+				}
+				SendMessage(WM_COPY);
+				return TRUE; // Stop the default single-box paste
+			}
+		}
+		return CDialogEx::PreTranslateMessage(pMsg);
+	}
+
+	LRESULT OnPaste(WPARAM wParam, LPARAM lParam) {
+		TRACE(L"  OnPaste() called.\n");
+
+		if (!OpenClipboard()) return 0;
+
+		// IsClipboardFormatAvailable(CF_UNICODETEXT) is needed?
+
+		// Get clipboard text (prefer Unicode)
+		HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+		if (hData != NULL) {
+			wchar_t* pszText = static_cast<wchar_t*>(GlobalLock(hData));
+			if (pszText != NULL) {
+				CString strClipboard(pszText);
+				GlobalUnlock(hData);
+				CloseClipboard();
+
+				// Split by tab and distribute
+//				DistributeStrings(strClipboard);
+			}
+		}
+		else {
+			CloseClipboard();
+		}
+		return 0;
+	}
+
+	LRESULT OnCopy(WPARAM wParam, LPARAM lParam) {
+		TRACE(L"  OnCopy() called.\n");
+
+		if (!OpenClipboard()) return 0;
+
+		EmptyClipboard(); // Empty the clipboard
+
+		// Collect the strings of the various controls
+		// and concatenate them separated by a tab character.
+		// Tab separated strings can be handled by spreadsheets
+		// as well.
+//		CString strClipboard;
+//		Collecttrings(strClipboard);
+		CString strClipboard = _T("145\tDept 145\t0");
+
+		// Allocate global memory
+		HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, (strClipboard.GetLength() + 1) * sizeof(TCHAR));
+		if (hGlob)
+		{
+			LPTSTR lpStr = (LPTSTR)GlobalLock(hGlob);
+			if(lpStr) wcscpy_s(lpStr, strClipboard.GetLength() + 1, strClipboard); // Copy data
+			GlobalUnlock(hGlob);
+
+			// Set clipboard data (CF_UNICODETEXT for UNICODE builds)
+			SetClipboardData(CF_UNICODETEXT, hGlob);
+		}
+		CloseClipboard();
+		return 0;
+	}
+#endif
+
 public:
 	CDialogDrop(UINT nIDTemplate, CWnd* pParent = nullptr) : CDialogEx(nIDTemplate, pParent), m_DraggingState(DraggingState::None) {}   // standard constructor
 	virtual ~CDialogDrop() {}
