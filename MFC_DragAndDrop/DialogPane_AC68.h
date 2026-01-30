@@ -58,6 +58,10 @@ public:
 
 	DragDrop_Data_AC68  m_DataRecord;
 
+#if defined(USE_CCOPYPASTEWND) && USE_CCOPYPASTEWND==1
+	CCopyPasteWnd  m_wndCopyPaste;
+#endif
+
 	static int iCount;
 
 	// Dialog Data

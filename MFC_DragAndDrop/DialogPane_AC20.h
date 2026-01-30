@@ -44,6 +44,10 @@ public:
 
 #if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
 	CYellowEdit m_wndYellowEdit;
+	CYellowEdit m_wndYellowEdit2;
+#endif
+#if defined(USE_CCOPYPASTEWND) && USE_CCOPYPASTEWND==1
+	CCopyPasteWnd  m_wndCopyPaste;
 #endif
 
 	static int iCount;

@@ -40,13 +40,18 @@ void DialogPane_AC20::DoDataExchange(CDataExchange* pDX)
 	int iCheckMark2 = (m_DataRecord.ulStatus[0] & 0x02) != 0;
 	int iRadioMark1 = (m_DataRecord.ulStatus[1] & 0x01);
 
-	DDX_Text(pDX, IDC_EDIT2, iDeptNo);
 #if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
 	// The user defined control must be initialized before it can be
 	// displayed properly.
 	DDX_Control(pDX, IDC_EDIT1, m_wndYellowEdit);  // initialize the user defined control before using it.
+	DDX_Control(pDX, IDC_EDIT2, m_wndYellowEdit2);  // initialize the user defined control before using it.
 #endif
+	DDX_Text(pDX, IDC_EDIT2, iDeptNo);
 	DDX_Text(pDX, IDC_EDIT1, csText);
+
+#if defined(USE_CCOPYPASTEWND) && USE_CCOPYPASTEWND==1
+	DDX_Control(pDX, IDC_COPYPASTE, m_wndCopyPaste);  // initialize the user defined control before using it.
+#endif
 
 	DDX_Check(pDX, IDC_CHECK1, iCheckMark1);
 	DDX_Check(pDX, IDC_CHECK2, iCheckMark2);
@@ -69,6 +74,7 @@ void DialogPane_AC20::PutData(DragDrop_Data_AC20& x)
 {
 #if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
 	m_wndYellowEdit.SetChangeColor(1);
+	m_wndYellowEdit2.SetChangeColor(1);
 #endif
 	m_DataRecord = x;
 

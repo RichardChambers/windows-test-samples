@@ -34,6 +34,30 @@ END_MESSAGE_MAP()
 #endif
 // ---------------------------------
 
+#if defined(USE_CCOPYPASTEWND) && USE_CCOPYPASTEWND==1
+
+IMPLEMENT_DYNAMIC(CCopyPasteWnd, CEdit)
+
+// NOTE: Never send WM_SETFOCUS or WM_KILLFOCUS messages using ::SendMessage or ::PostMessage.
+//       Instead, use the CWnd::SetFocus() member function(or the global::SetFocus Windows API function)
+//       to actually change the keyboard focus.
+//       Windows automatically sends the appropriate WM_KILLFOCUSand WM_SETFOCUS notifications
+//       as a result of the SetFocus call.
+
+BEGIN_MESSAGE_MAP(CCopyPasteWnd, CEdit)
+    ON_WM_CTLCOLOR_REFLECT()
+    ON_MESSAGE(WM_PASTE, OnPaste)
+    ON_MESSAGE(WM_COPY, OnCopy)
+    ON_WM_MOUSEMOVE()
+    ON_WM_MOUSEHOVER()
+    ON_WM_MOUSELEAVE() // Recommended to reset tracking state
+    ON_WM_SETFOCUS()
+    ON_WM_KILLFOCUS()
+END_MESSAGE_MAP()
+
+#endif
+
+
 // PaneCOleDataSource
 
 CDialogDrop::PaneCOleDataSource::PaneCOleDataSource() : COleDataSource()

@@ -56,6 +56,7 @@
 #define IDC_RADIO2                      1005
 #define IDC_PANE_AC20_ID                1006
 #define IDC_EDIT3                       1007
+#define IDC_COPYPASTE                   1008
 
 // Next default values for new objects
 // 
@@ -63,7 +64,15 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1008
+#define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif
+
+#define USE_CYELLOWEDIT  1
+#define CYELLOWEDIT  "YellowEdit"
+
+#define USE_CCOPYPASTEWND  1
+#define CCOPYPASTEWND      "CopyPasteWnd"
+
+#define USE_DIALOG_FONT  9,"Segoe UI",400,0,0x0

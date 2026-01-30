@@ -48,6 +48,9 @@ void DialogPane_AC68::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK2, iCheckMark2);
 	DDX_Text(pDX, IDC_EDIT3, iDeptNo);
 	DDX_Radio(pDX, IDC_RADIO1, iRadioMark1);
+#if defined(USE_CCOPYPASTEWND) && USE_CCOPYPASTEWND==1
+	DDX_Control(pDX, IDC_COPYPASTE, m_wndCopyPaste);  // initialize the user defined control before using it.
+#endif
 
 	if (pDX->m_bSaveAndValidate) {
 		m_DataRecord.ulStatus[0] &= ~(ULONG)0x01;

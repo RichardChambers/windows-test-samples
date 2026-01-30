@@ -4,6 +4,8 @@
 
 #include <string>
 
+#include "resource.h"
+
 // CDialogPane dialog
 
 // Drag and Drop data types follow. These indicate
@@ -11,6 +13,9 @@
 // to drag different types of data.
 #define DRAGDROP_DATA_AC20      CF_PRIVATEFIRST
 #define DRAGDROP_DATA_AC68      (DRAGDROP_DATA_AC20 + 1)
+
+
+#if defined(__cplusplus)
 
 class CDialogDrop : public CDialogEx
 {
@@ -303,8 +308,8 @@ public:
 //  - registration of the new window class
 //  - change to the DoDataExchange() logic
 
-// Resource file directive
-//         CONTROL         "", IDC_EDIT1, "YellowEdit", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 75, 31, 100, 12
+// Resource file directive (CYELLOWEDIT is defined in Resource.h, see RegisterWindowClass()).
+//         CONTROL         "", IDC_EDIT1, CYELLOWEDIT, WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 75, 31, 100, 12
 
 // Register the Window class before the dialog is created.
 
@@ -316,7 +321,6 @@ public:
 // rather than a stadard Edit box.
 // Setting this to 1 will include the source code changes needed.
 // You can also search this defined constant to see the various changes needed.
-#define USE_CYELLOWEDIT  0
 
 #if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
 
@@ -356,6 +360,17 @@ public:
 		return savedColor;
 	}
 
+	HBRUSH CtlColor(CDC* pDC, UINT nCtlColor)
+	{
+		// TODO: Change any attributes of the DC here
+		// TODO: Return a non-NULL brush if the
+		//       parent's handler should not be called
+
+		pDC->SetTextColor(m_clrText);   // color of the text
+		pDC->SetBkColor(m_clrBkgnd);    // color of the text background
+		return (HBRUSH)m_brBkgnd.GetSafeHandle();     // ctl bkgnd
+	}
+
 	static BOOL RegisterWindowClass() {
 		// Code to be invoked at application startup to register the window
 		// class for our new version of the Edit box control.
@@ -365,15 +380,130 @@ public:
 		WNDCLASS wc;
 
 		// Get info from the standard EDIT class to inherit its base behavior
-		if (!::GetClassInfo(NULL, _T("EDIT"), &wc))
+		if (!::GetClassInfo(NULL, _T("EDIT"), &wc)) {
+			TRACE(L"CYellowEdit::RegisterWindowClass() failed.");
 			return FALSE;
+		}
 
 		// Modify the essential fields for your custom class
-		wc.lpszClassName = _T("YellowEdit"); // Must match the CONTROL directive used in your resource file
+		wc.lpszClassName = _T(CYELLOWEDIT); // Must match the CONTROL directive used in your resource file
 		wc.hInstance = AfxGetInstanceHandle();
 
 		// Register with MFC's helper to ensure automatic cleanup
 		return AfxRegisterClass(&wc);
+	}
+
+	DECLARE_MESSAGE_MAP()
+};
+
+#endif
+
+
+#if defined(USE_CCOPYPASTEWND) && USE_CCOPYPASTEWND==1
+// Using this new control in a dialog requires a couple of changes from a standard control.
+//  - change to the resource file
+//  - registration of the new window class
+//  - change to the DoDataExchange() logic
+
+// Resource file directive (CCOPYPASTEWND is defined in Resource.h, see RegisterWindowClass()).
+//     CONTROL         "Dialog\nCopy\nPaste", IDC_COPYPASTE, CCOPYPASTEWND, WS_CHILD | WS_VISIBLE | ES_MULTILINE | WS_BORDER, 139, 5, 40, 30
+
+// Register the Window class before the dialog is created.
+//     CCopyPasteWnd::RegisterWindowClass();
+
+// Properly initialize the user defined control in the DoDataExchange() function then set/get the value
+//     DDX_Control(pDX, IDC_COPYPASTE, m_wndCopyPaste);  // initialize the user defined control before using it.
+
+class CCopyPasteWnd : public CEdit
+{
+	DECLARE_DYNAMIC(CCopyPasteWnd)
+
+private:
+	const 	COLORREF  m_clrBkgndDefault = RGB(200, 200, 255);      // color for the solid brush used to pain the background.
+
+	COLORREF  m_clrText;       // color for the text.
+	COLORREF  m_clrBkgnd;      // color for the solid brush used to pain the background.
+	CBrush    m_brBkgnd;       // solid brush for painting the background
+
+protected:
+	BOOL m_bHovering = FALSE;
+	BOOL m_bMouseTracking = FALSE;
+
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point) {
+		m_bHovering = TRUE;
+		SetFocus();
+	}
+
+	afx_msg void OnMouseLeave() {
+		m_bMouseTracking = FALSE;
+		m_bHovering = FALSE;
+		Invalidate(); // Reset to normal colors
+	}
+
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point)
+	{
+		if (!m_bMouseTracking)
+		{
+			m_bHovering = FALSE;
+
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(TRACKMOUSEEVENT);
+			tme.dwFlags = TME_HOVER | TME_LEAVE; // Request both hover and leave
+			tme.hwndTrack = m_hWnd;
+			tme.dwHoverTime = HOVER_DEFAULT; // Standard system hover time (400ms)
+
+			if (::TrackMouseEvent(&tme))
+			{
+				m_bMouseTracking = TRUE;
+			}
+		}
+		CWnd::OnMouseMove(nFlags, point);
+	}
+
+	afx_msg void OnSetFocus(CWnd* pOldWnd)
+	{
+		// Call the base class handler
+		CEdit::OnSetFocus(pOldWnd);
+
+		// Your custom code here (e.g., highlight a control)
+		// pOldWnd is the window that is losing focus (or NULL)
+	}
+
+	afx_msg void OnKillFocus(CWnd* pNewWnd)
+	{
+		// Call the base class handler
+		CEdit::OnKillFocus(pNewWnd);
+
+		// Your custom code here (e.g., perform data validation)
+		// pNewWnd is the window that is receiving focus (or NULL)
+	}
+
+public:
+	CCopyPasteWnd() : CEdit::CEdit()
+	{
+		m_bHovering = FALSE;
+		m_bMouseTracking = FALSE;
+		m_clrText = RGB(0, 0, 0);          // color of the text. all zeros is black.
+		m_clrBkgnd = m_clrBkgndDefault;     // color of the background. 
+		m_brBkgnd.CreateSolidBrush(m_clrBkgnd);
+	}
+
+	COLORREF  SetChangeColor(int iState) {
+		COLORREF savedColor = m_clrBkgnd;
+
+		switch (iState) {
+		case 0:
+			m_clrBkgnd = m_clrBkgndDefault;     // color of the background. 
+			break;
+		case 1:
+			m_clrBkgnd = m_clrBkgndDefault;     // color of the background. 
+			break;
+		}
+
+		m_brBkgnd.DeleteObject();
+		m_brBkgnd.CreateSolidBrush(m_clrBkgnd);
+
+		return savedColor;
 	}
 
 	HBRUSH CtlColor(CDC* pDC, UINT nCtlColor)
@@ -387,7 +517,92 @@ public:
 		return (HBRUSH)m_brBkgnd.GetSafeHandle();     // ctl bkgnd
 	}
 
+	virtual LRESULT OnCopy(WPARAM wParam, LPARAM lParam)
+	{
+		TRACE(L"  CCopyPasteWnd::OnCopy() called.\n");
+
+		if (!OpenClipboard()) return 0;
+
+		EmptyClipboard(); // Empty the clipboard
+
+		// Collect the strings of the various controls
+		// and concatenate them separated by a tab character.
+		// Tab separated strings can be handled by spreadsheets
+		// as well.
+//		CString strClipboard;
+//		Collecttrings(strClipboard);
+		CString strClipboard = _T("145\tDept 145\t0");
+
+		// Allocate global memory
+		HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, (strClipboard.GetLength() + 1) * sizeof(TCHAR));
+		if (hGlob)
+		{
+			LPTSTR lpStr = (LPTSTR)GlobalLock(hGlob);
+			if (lpStr) wcscpy_s(lpStr, strClipboard.GetLength() + 1, strClipboard); // Copy data
+			GlobalUnlock(hGlob);
+
+			// Set clipboard data (CF_UNICODETEXT for UNICODE builds)
+			SetClipboardData(CF_UNICODETEXT, hGlob);
+		}
+		CloseClipboard();
+		return 0;
+	}
+
+	virtual LRESULT OnPaste(WPARAM wParam, LPARAM lParam)
+	{
+		TRACE(L"  CCopyPasteWnd::OnPaste() called.\n");
+
+		if (!OpenClipboard()) return 0;
+
+		// IsClipboardFormatAvailable(CF_UNICODETEXT) is needed?
+
+		// Get clipboard text (prefer Unicode)
+		HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+		if (hData != NULL) {
+			wchar_t* pszText = static_cast<wchar_t*>(GlobalLock(hData));
+			if (pszText != NULL) {
+				CString strClipboard(pszText);
+				GlobalUnlock(hData);
+				CloseClipboard();
+
+				// Split by tab and distribute
+//				DistributeStrings(strClipboard);
+			}
+		}
+		else {
+			CloseClipboard();
+		}
+		return 0;
+	}
+
+	enum class CopyPasteWndOp { Unknown = 0, Copy, Paste };
+
+	CopyPasteWndOp m_Op = CopyPasteWndOp::Unknown;
+
+	static BOOL RegisterWindowClass() {
+		// Code to be invoked at application startup to register the window
+		// class for our new version of the Static control.
+		// The new window class must be registered before it can be used
+		// in a dialog template with the CONTROL resource directive.
+
+		WNDCLASS wc;
+
+		// Get info from the standard EDIT class to inherit its base behavior
+		if (!::GetClassInfo(NULL, _T("EDIT"), &wc))
+			return FALSE;
+
+		// Modify the essential fields for your custom class
+		wc.lpszClassName = _T(CCOPYPASTEWND); // Must match the CONTROL directive used in your resource file
+		wc.hInstance = AfxGetInstanceHandle();
+
+		// Register with MFC's helper to ensure automatic cleanup
+		return AfxRegisterClass(&wc);
+	}
+
 	DECLARE_MESSAGE_MAP()
+
 };
+
+#endif
 
 #endif
