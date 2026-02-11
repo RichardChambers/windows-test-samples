@@ -93,6 +93,8 @@ BEGIN_MESSAGE_MAP(DialogPane_AC20, CDialogDrop)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSEHOVER()
+	ON_WM_MOUSELEAVE() // Recommended to reset tracking state
 	ON_MESSAGE(WM_INITDIALOG, HandleInitDialog)
 END_MESSAGE_MAP()
 
@@ -187,6 +189,22 @@ void DialogPane_AC20::OnLButtonDown(UINT nFlags, CPoint point)
 
 void DialogPane_AC20::OnMouseMove(UINT nFlags, CPoint point)
 {
+	if (!m_bMouseTracking && !m_bDragging)
+	{
+		m_bHovering = FALSE;
+
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_HOVER | TME_LEAVE; // Request both hover and leave
+		tme.hwndTrack = m_hWnd;
+		tme.dwHoverTime = HOVER_DEFAULT; // Standard system hover time (400ms)
+
+		if (::TrackMouseEvent(&tme))
+		{
+			m_bMouseTracking = TRUE;
+		}
+	}
+
 	if (m_bDragging && (abs(point.x - m_ptDragStart.x) > 5 || abs(point.y - m_ptDragStart.y) > 5))
 	{
 		CMainFrame* p = static_cast<CMainFrame*> (AfxGetApp()->m_pMainWnd);
