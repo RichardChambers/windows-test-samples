@@ -57,6 +57,12 @@
     <ClInclude Include="DialogPane_AC68.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PropertyPane_AC20.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FluentToggle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFC-DragDropFile.cpp">
@@ -90,6 +96,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DialogPane_AC68.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertyPane_AC20.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FluentToggle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

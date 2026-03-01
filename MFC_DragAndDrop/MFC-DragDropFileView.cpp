@@ -148,9 +148,34 @@ void CMFCDragDropFileView::OnInitialUpdate()
 
 		// Set the dialog's position and size
 		// Example: place it in the top-left corner with specific dimensions
-		m_wndMyDialogPaneAC68.SetWindowPos(NULL, 150, 310, 400, 300, SWP_SHOWWINDOW | SWP_NOZORDER);
+		m_wndMyDialogPaneAC68.SetWindowPos(NULL, 150, 200, 400, 300, SWP_SHOWWINDOW | SWP_NOZORDER);
 	}
 
+#if 0
+	if (m_wndMyPropertySheetAC20.m_hWnd == NULL)
+	{
+		// Create the modeless dialog as a child of the view
+		// IDD_MY_DIALOG_PANE is the dialog resource ID
+		// "this" points to the CView parent
+		if (!m_wndMyPropertySheetAC20.Create(this))
+		{
+			// Handle creation failure
+			TRACE0("Warning: Dialog m_wndMyPropertySheetAC20 creation failed.\n");
+			return;
+		}
+
+		// Optional: Position the dialog within the view's client area
+		// Get the view's client rectangle
+		CRect rcClient;
+		GetClientRect(&rcClient);
+		CRect rcDialog;
+		m_wndMyPropertySheetAC20.GetClientRect(&rcDialog);
+
+		// Set the dialog's position and size
+		// Example: place it in the top-left corner with specific dimensions
+		m_wndMyDialogPaneAC68.SetWindowPos(NULL, 150, 310, 400, 300, SWP_SHOWWINDOW | SWP_NOZORDER);
+	}
+#endif
 }
 
 // Override these functions to provide feedback and handle the drop:

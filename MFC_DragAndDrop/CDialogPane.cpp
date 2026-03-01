@@ -12,6 +12,19 @@
 
 // CDialogPane dialog
 
+
+IMPLEMENT_DYNAMIC(CDialogTabPane, CDialogEx)
+
+BEGIN_MESSAGE_MAP(CDialogTabPane, CDialogEx)
+END_MESSAGE_MAP()
+
+
+IMPLEMENT_DYNAMIC(CDialogPropertySheet, CPropertySheetEx)
+
+BEGIN_MESSAGE_MAP(CDialogPropertySheet, CPropertySheetEx)
+END_MESSAGE_MAP()
+
+
 IMPLEMENT_DYNAMIC(CDialogDrop, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CDialogDrop, CDialogEx)

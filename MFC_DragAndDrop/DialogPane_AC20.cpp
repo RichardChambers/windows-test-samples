@@ -15,6 +15,7 @@ DialogPane_AC20::DialogPane_AC20(CWnd* pParent /*=nullptr*/)
 	: CDialogDrop(IDD_DIALOG_AC20, pParent), myIcount(++iCount)
 {
 	std::memset(&m_DataRecord, 0, sizeof(m_DataRecord));
+	m_DataRecord.ulStatus[1] |= 0x01;
 }
 
 DialogPane_AC20::~DialogPane_AC20()
@@ -27,6 +28,8 @@ BOOL DialogPane_AC20::OnInitDialog()
 
 	bRet = CDialogDrop::OnInitDialog();
 
+//	m_myToggle.Create(CRect(160, 120, 300, 150), this, IDC_MY_TOGGLE, _T("Radio 1 and 2 Label"));
+
 	return bRet;
 }
 
@@ -38,7 +41,8 @@ void DialogPane_AC20::DoDataExchange(CDataExchange* pDX)
 	CString csText(m_DataRecord.deptName);
 	int iCheckMark1 = (m_DataRecord.ulStatus[0] & 0x01) != 0;
 	int iCheckMark2 = (m_DataRecord.ulStatus[0] & 0x02) != 0;
-	int iRadioMark1 = (m_DataRecord.ulStatus[1] & 0x01);
+	int iRadioMark1 = (m_DataRecord.ulStatus[1] & 0x01) == 1;
+	int iRadioMark2 = (m_DataRecord.ulStatus[1] & 0x01) == 0;
 
 #if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
 	// The user defined control must be initialized before it can be
@@ -46,7 +50,7 @@ void DialogPane_AC20::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT1, m_wndYellowEdit);  // initialize the user defined control before using it.
 	DDX_Control(pDX, IDC_EDIT2, m_wndYellowEdit2);  // initialize the user defined control before using it.
 #endif
-	DDX_Text(pDX, IDC_EDIT2, iDeptNo);
+	DDX_Text(pDX, IDC_EDIT2, iDeptNo);      // Set/Get the value of the user defined control
 	DDX_Text(pDX, IDC_EDIT1, csText);
 
 #if defined(USE_CCOPYPASTEWND) && USE_CCOPYPASTEWND==1
@@ -55,7 +59,18 @@ void DialogPane_AC20::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Check(pDX, IDC_CHECK1, iCheckMark1);
 	DDX_Check(pDX, IDC_CHECK2, iCheckMark2);
+
+#if defined(USE_CFLUENTTOGGLE) && USE_CFLUENTTOGGLE == 1
+	DDX_Control(pDX, IDC_MY_TOGGLE, m_myToggle);  // Initialize the user defined control before using it.
+	DDX_Check(pDX, IDC_MY_TOGGLE, iRadioMark1);   // Set/Get the current setting of the toggle box
+#else
+	// old style Radio buttons rather than the modern sliding toggle control
+	// iRadioMark1 indicates if the bit is to be turned on or turned off however
+	// we need two radio buttons in a group or one check box to do the same thing
+	// as one sliding toggle
 	DDX_Radio(pDX, IDC_RADIO1, iRadioMark1);
+	DDX_Radio(pDX, IDC_RADIO2, iRadioMark2);
+#endif
 
 	if (pDX->m_bSaveAndValidate) {
 		m_DataRecord.ulStatus[0] &= ~(ULONG)0x01;

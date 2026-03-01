@@ -85,6 +85,18 @@ BOOL CMFCDragDropFileApp::InitInstance()
 	}
 #endif
 
+#if defined(USE_CFLUENTTOGGLE) && USE_CFLUENTTOGGLE==1
+	// This registers the window class for our Copy/Paste control.
+	// The window class of "CopyPasteWnd" has to be registered before it can be
+	// used in a CONTROL resouce directive.
+#if 0
+	if (!CFluentToggle::RegisterWindowClass()) {
+		TRACE(L"CFluentToggle::RegisterWindowClass() failed.");
+	}
+#endif
+#endif
+
+
 #if defined(USE_CYELLOWEDIT) && USE_CYELLOWEDIT==1
 	// This registers the window class for our Edit box with a yellow background.
 	// The window class of "YellowEdit" has to be registered before it can be

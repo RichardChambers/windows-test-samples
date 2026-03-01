@@ -7,6 +7,7 @@
 #include <afxole.h>
 
 #include "DialogPane_AC20.h"
+#include "PropertyPane_AC20.h"
 #include "DialogPane_AC68.h"
 
 class CMFCDragDropFileView : public CView
@@ -56,6 +57,7 @@ protected:
 
 	DialogPane_AC20 m_wndMyDialogPaneAC20; // Member variable for the dialog
 	DialogPane_AC68 m_wndMyDialogPaneAC68; // Member variable for the dialog
+	PropertySheet_AC20 m_wndMyPropertySheetAC20;
 
 	wchar_t* str[3];
 	CRect rect;

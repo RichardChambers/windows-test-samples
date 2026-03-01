@@ -72,16 +72,26 @@ int CMainFrame::WriteFormattedToOutput(const COutputWnd::WindowType wid, const w
 CMainFrame::CMainFrame() noexcept
 {
 	// TODO: add member initialization code here
+	gdiplusToken = 0;
+
 }
 
 CMainFrame::~CMainFrame()
 {
+	// 3. Clean up before the application exits
+	Gdiplus::GdiplusShutdown(gdiplusToken);
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CMDIFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
+
+	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+
+	// 1. Initialize GDI+
+	Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+
 
 	BOOL bNameValid;
 

@@ -21,6 +21,7 @@ public:
 
 // Attributes
 public:
+	ULONG_PTR gdiplusToken;
 
 // Operations
 public:

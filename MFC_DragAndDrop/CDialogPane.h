@@ -17,6 +17,41 @@
 
 #if defined(__cplusplus)
 
+class CDialogTabPane : public CDialogEx
+{
+	DECLARE_DYNAMIC(CDialogTabPane)
+
+public:
+	CDialogTabPane(UINT nIDTemplate, CWnd* pParent = nullptr) : CDialogEx(nIDTemplate, pParent) {}   // standard constructor
+	virtual ~CDialogTabPane() {}
+
+	DECLARE_MESSAGE_MAP()
+};
+
+class CDialogPropertySheet : public CPropertySheetEx
+{
+	DECLARE_DYNAMIC(CDialogPropertySheet)
+
+public:
+	CDialogPropertySheet() : CPropertySheetEx() {}
+	CDialogPropertySheet(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) : CPropertySheetEx(nIDCaption, pParentWnd, iSelectPage) {}
+	CDialogPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) : CPropertySheetEx(pszCaption, pParentWnd, iSelectPage) {}
+
+	void Construct(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) {
+		CPropertySheetEx::Construct(nIDCaption, pParentWnd, iSelectPage);
+	}
+	void Construct(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0) {
+		CPropertySheetEx::Construct(pszCaption, pParentWnd, iSelectPage);
+	}
+
+	virtual ~CDialogPropertySheet() {}
+
+	virtual BOOL OnInitDialog() { return CPropertySheetEx::OnInitDialog(); }
+
+
+	DECLARE_MESSAGE_MAP()
+};
+
 class CDialogDrop : public CDialogEx
 {
 	DECLARE_DYNAMIC(CDialogDrop)

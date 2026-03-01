@@ -46,8 +46,8 @@
 #define IDS_FIND_TAB                    302
 #define IDS_EDIT_MENU                   306
 #define IDD_DIALOG_AC20                 310
-#define IDD_DIALOG1                     312
 #define IDD_DIALOG_AC68                 312
+#define IDD_TAB_TYPE_A                  313
 #define IDC_EDIT1                       1000
 #define IDC_EDIT2                       1001
 #define IDC_CHECK1                      1002
@@ -57,6 +57,15 @@
 #define IDC_PANE_AC20_ID                1006
 #define IDC_EDIT3                       1007
 #define IDC_COPYPASTE                   1008
+#define IDC_RADIO_1_0                   1010
+#define IDC_RADIO_1_1                   1011
+#define IDC_RADIO_2_0                   1012
+#define IDC_RADIO_2_1                   1013
+#define IDC_RADIO_3_0                   1014
+#define IDC_RADIO_3_1                   1015
+#define IDC_RADIO_4_0                   1016
+#define IDC_RADIO_4_1                   1017
+#define IDC_MY_TOGGLE                   1018
 
 // Next default values for new objects
 // 
@@ -64,7 +73,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        314
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1009
+#define _APS_NEXT_CONTROL_VALUE         1019
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif
@@ -74,5 +83,8 @@
 
 #define USE_CCOPYPASTEWND  1
 #define CCOPYPASTEWND      "CopyPasteWnd"
+
+#define USE_CFLUENTTOGGLE  1
+#define CFLUENTTOGLE       "FluentToggle"
 
 #define USE_DIALOG_FONT  9,"Segoe UI",400,0,0x0

@@ -1,6 +1,8 @@
 #pragma once
 #include "CDialogPane.h"
 
+#include "FluentToggle.h"
+
 
 struct DragDrop_Data_AC20 {
 	USHORT   deptNo;
@@ -49,6 +51,8 @@ public:
 #if defined(USE_CCOPYPASTEWND) && USE_CCOPYPASTEWND==1
 	CCopyPasteWnd  m_wndCopyPaste;
 #endif
+
+	CFluentToggle  m_myToggle;
 
 	static int iCount;
 
