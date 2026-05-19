@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "CScrollPane.h"
+#include "CSlidingMenuWin.h"
 
 // CMFCAnimationtestDlg dialog
 class CMFCAnimationtestDlg : public CDialogEx
@@ -39,6 +40,11 @@ protected:
 	CScrollPane * pScrollPane;
 	CRect         rcScrollPane;
 
+	CWnd   * pSlideHolder;
+	CRect    rcSlideHolder;
+
+	CSlidePane * pSlidePane = nullptr;
+	CRect         rcSlidePane;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();

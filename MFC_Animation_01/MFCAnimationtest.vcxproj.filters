@@ -39,6 +39,9 @@
     <ClInclude Include="CScrollPane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CSlidingMenuWin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCAnimationtest.cpp">
@@ -54,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CScrollPane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CSlidingMenuWin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

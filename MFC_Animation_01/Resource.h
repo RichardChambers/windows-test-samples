@@ -13,6 +13,9 @@
 #define IDD_MFCANIMATIONTEST_SCROLLPANE_SB      1003
 #define IDD_MFCANIMATIONTEST_PANE               1004
 
+#define IDD_MFCANIMATIONTEST_SLIDEPANE          1100
+#define IDD_MFCANIMATIONTEST_SLIDE              1104
+
 #define SIZEOF_DIALOG_X             200
 #define SIZEOF_DIALOG_Y             500
 #define SIZEOF_PANE_X               400

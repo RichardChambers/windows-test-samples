@@ -60,6 +60,9 @@ CMFCAnimationtestDlg::~CMFCAnimationtestDlg()
 {
 	if (pScrollPane) delete pScrollPane;
 	pScrollPane = nullptr;
+
+	if (pSlidePane) delete pSlidePane;
+	pSlidePane = nullptr;
 }
 
 void CMFCAnimationtestDlg::DoDataExchange(CDataExchange* pDX)
@@ -229,7 +232,13 @@ BOOL CMFCAnimationtestDlg::OnInitDialog()
 
 		pScrollPane = new CScrollPane(this);
 		pScrollPane->Create(IDD_MFCANIMATIONTEST_SCROLLPANE, this);
-		pScrollPane->GetClientRect(&rcScrollPane);
+	}
+
+	pSlideHolder = GetDlgItem(IDD_MFCANIMATIONTEST_SLIDEPANE);
+	BOOL bResult = FALSE;
+	if (pSlideHolder) {
+		pSlidePane = new CMFCSlidingMenuWin(this);
+		pSlidePane->CreateSlideBar(pSlideHolder);
 	}
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
